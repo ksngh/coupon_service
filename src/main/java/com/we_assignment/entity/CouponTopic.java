@@ -1,4 +1,33 @@
 package com.we_assignment.entity;
 
-public class CouponTopic {
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+@Entity
+@Table(name = "CouponTopics")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+public class CouponTopic extends Timestamped{
+
+    @Id
+    @Column(name = "coupon_topic_id", nullable = false, unique = true)
+    private UUID id;
+
+    @Column(name = "name", nullable = false, length = 40)
+    private String name;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @OneToMany(mappedBy = "couponTopic")
+    private List<Coupon> coupons = new ArrayList<Coupon>();
+
 }
