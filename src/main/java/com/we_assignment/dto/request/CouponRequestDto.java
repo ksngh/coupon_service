@@ -1,0 +1,4 @@
+package com.we_assignment.dto.request;
+
+public class CouponRequestDto {
+}
