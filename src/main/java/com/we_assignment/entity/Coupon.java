@@ -2,6 +2,7 @@ package com.we_assignment.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Builder
 public class Coupon extends Timestamped{
 
     @Id
@@ -25,10 +27,7 @@ public class Coupon extends Timestamped{
     @Column(name = "is_redeemed", nullable = false)
     private boolean isRedeemed;
 
-    @OneToMany(mappedBy = "coupon")
-    private List<CouponRedemption> redemptions = new ArrayList<CouponRedemption>();
-
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "coupon_topic_fk", nullable = false)
     private CouponTopic couponTopic;
 
