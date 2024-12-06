@@ -1,0 +1,9 @@
+= Coupon API Documentation
+Spring REST Docs Example
+
+== Get Coupons
+
+include::build/generated-snippets/get-coupons/http-request.adoc[]
+include::build/generated-snippets/get-coupons/http-response.adoc[]
+include::build/generated-snippets/get-coupons/query-parameters.adoc[]
+include::build/generated-snippets/get-coupons/response-fields.adoc[]

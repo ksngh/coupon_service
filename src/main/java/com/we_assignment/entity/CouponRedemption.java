@@ -26,8 +26,5 @@ public class CouponRedemption extends Timestamped {
     @JoinColumn(name = "coupon_fk", nullable = false)
     private Coupon coupon;
 
-    @Column(name = "is_redeemed", nullable = false)
-    private boolean isRedeemed;
-
 }
 

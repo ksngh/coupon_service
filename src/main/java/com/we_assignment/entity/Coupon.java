@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,11 +25,25 @@ public class Coupon extends Timestamped{
     @Column(name = "code", length = 16, nullable = false, unique = true)
     private String code;
 
-    @Column(name = "is_redeemed", nullable = false)
-    private boolean isRedeemed;
+    @Column(name = "is_redeemed")
+    private boolean isRedeemed = false;
+
+    @Column(name = "is_active")
+    private boolean isActive = true;
+
+    @Column(name = "expired_at", nullable = false)
+    private LocalDateTime expiredAt;
 
     @ManyToOne
     @JoinColumn(name = "coupon_topic_fk", nullable = false)
     private CouponTopic couponTopic;
+
+    private void useCoupon(){
+        isRedeemed = true;
+    }
+
+    private void expiredCoupon(){
+        isActive = false;
+    }
 
 }
