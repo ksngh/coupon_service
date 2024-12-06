@@ -1,10 +1,12 @@
 package com.we_assignment.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @MappedSuperclass
+@Getter
 public abstract class Timestamped {
 
     @Column(name = "created_at", nullable = true, updatable = false)
@@ -26,8 +28,7 @@ public abstract class Timestamped {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @PreRemove
-    protected void onDelete() {
+    public void delete() {
         this.deletedAt = LocalDateTime.now();
     }
 }

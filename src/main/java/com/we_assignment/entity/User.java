@@ -3,6 +3,7 @@ package com.we_assignment.entity;
 import com.we_assignment.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User extends Timestamped {
 
     @Id
