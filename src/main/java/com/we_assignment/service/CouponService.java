@@ -73,8 +73,28 @@ public class CouponService {
         }
 
         return predicate;
-
     }
+
+    public void updateCoupon(CouponRequestDto.Update couponRequestDto) {
+        couponRepository.save(updateDtoToCoupon(couponRequestDto));
+    }
+
+    public Coupon updateDtoToCoupon(CouponRequestDto.Update couponRequestDto) {
+
+        CouponTopic couponTopic = couponTopicRepository
+                .findById(couponRequestDto.getCouponTopicId())
+                .orElseThrow(CouponTopicNullPointerException::new);
+
+        return Coupon.builder()
+                .couponTopic(couponTopic)
+                .id(couponRequestDto.getCouponId())
+                .code(couponRequestDto.getCode())
+                .isActive(couponRequestDto.isActive())
+                .isRedeemed(couponRequestDto.isRedeemed())
+                .build();
+    }
+
+
 
 
 

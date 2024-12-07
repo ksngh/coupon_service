@@ -6,11 +6,10 @@ import com.we_assignment.dto.request.CouponRequestDto;
 import com.we_assignment.dto.response.CouponResponseDto;
 import com.we_assignment.enums.SuccessMessage;
 import com.we_assignment.service.CouponService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,14 +32,16 @@ public class CouponController {
     }
 
     @PostMapping()
-    public CustomApiResponse<?> createCoupons(@RequestBody CouponRequestDto.Create couponRequestDto) {
+    public CustomApiResponse<?> createCoupons(@Valid @RequestBody CouponRequestDto.Create couponRequestDto) {
         couponService.generateCoupon(couponRequestDto);
         return CustomApiResponse.ok(new CustomResponseMessage("Coupon" + SuccessMessage.CREATE));
     }
 
-    @PatchMapping()
-    public ResponseEntity<?> updateCoupons(@RequestBody CouponRequestDto couponRequestDto) {
-        return ResponseEntity.ok(new CustomResponseMessage("Coupon" + SuccessMessage.UPDATE));
+    @PutMapping()
+    public CustomApiResponse<?> updateCoupons(@Valid @RequestBody CouponRequestDto.Update couponRequestDto) {
+        couponService.updateDtoToCoupon(couponRequestDto);
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon" + SuccessMessage.UPDATE));
     }
+
 
 }

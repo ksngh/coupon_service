@@ -1,11 +1,13 @@
 package com.we_assignment.dto.request;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class CouponRequestDto {
@@ -21,4 +23,22 @@ public class CouponRequestDto {
         @Min(value = 1, message = "CouponQuantity는 0 이상이어야 합니다.")
         private final Integer couponQuantity;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class Update{
+
+        @NotNull(message = "CouponTopic ID는 필수 입력값입니다.")
+        private final UUID couponTopicId;
+
+        @NotNull(message = "Coupon ID는 필수 입력값입니다.")
+        private final UUID couponId;
+
+        private String code;
+        private boolean isRedeemed;
+        private boolean isActive;
+        private LocalDateTime expiredAt;
+
+    }
+
 }
