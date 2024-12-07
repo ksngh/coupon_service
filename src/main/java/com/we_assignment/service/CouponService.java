@@ -36,19 +36,21 @@ public class CouponService {
 
         CouponTopic couponTopic = couponTopicRepository.findById(couponRequestDto.getCouponTopicId())
                 .orElseThrow(CouponTopicNullPointerException::new);
-
         Set<String> codes = CouponCodeGenerator.generateUniqueCodes(couponRequestDto.getCouponQuantity());
+        List<Coupon> coupons = codeToCoupon(codes, couponTopic);
 
-        List<Coupon> coupons = codes.stream()
+        couponRepository.saveAll(coupons);
+
+    }
+
+    public List<Coupon> codeToCoupon(Set<String> codes,CouponTopic couponTopic) {
+        return codes.stream()
                 .map(code -> Coupon.builder()
                         .id(UUID.randomUUID())
                         .couponTopic(couponTopic)
                         .code(code)
                         .build())
-                .toList(); // Java 16 이상에서는 .toList() 사용 가능, 그렇지 않으면 Collectors.toList() 사용
-
-        couponRepository.saveAll(coupons);
-
+                .toList();
     }
 
     public Page<CouponResponseDto> getCoupons(String couponCode, Boolean isRedeemed, String couponTopicName, Pageable pageable) {
@@ -78,7 +80,8 @@ public class CouponService {
 
     @Transactional
     public void updateCoupon(CouponRequestDto.Update couponRequestDto,UUID couponId) {
-        couponRepository.save(updateDtoToCoupon(couponRequestDto,couponId));
+        Coupon coupon = updateDtoToCoupon(couponRequestDto,couponId);
+        couponRepository.save(coupon);
     }
 
     public Coupon updateDtoToCoupon(CouponRequestDto.Update couponRequestDto,UUID couponId) {

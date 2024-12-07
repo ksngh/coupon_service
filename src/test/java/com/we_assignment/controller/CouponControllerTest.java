@@ -27,9 +27,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -83,43 +83,44 @@ public class CouponControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         queryParameters(
-                                parameterWithName("couponCode").description("The code of the coupon (optional)").optional(),
-                                parameterWithName("isRedeemed").description("Filter by redeemed status (optional)").optional(),
-                                parameterWithName("couponTopicName").description("The topic name of the coupon (optional)").optional(),
-                                parameterWithName("page").description("Page number for pagination"),
-                                parameterWithName("size").description("Page size for pagination")
+                                parameterWithName("couponCode").description("쿠폰 코드 (선택 사항)").optional(),
+                                parameterWithName("isRedeemed").description("쿠폰 사용 여부로 필터링 (선택 사항)").optional(),
+                                parameterWithName("couponTopicName").description("쿠폰 주제 이름 (선택 사항)").optional(),
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("size").description("페이지 크기")
                         ),
                         responseFields(
-                                fieldWithPath("code").description("HTTP response code"),
-                                fieldWithPath("status").description("HTTP response status"),
-                                fieldWithPath("message").description("Response message"),
-                                fieldWithPath("data.content[].couponCode").description("The code of the coupon"),
-                                fieldWithPath("data.content[].expirationTime").description("The expiration time of the coupon"),
-                                fieldWithPath("data.content[].redeemed").description("Whether the coupon is redeemed"),
-                                fieldWithPath("data.content[].couponTopicName").description("The topic name of the coupon"),
-                                fieldWithPath("data.content[].couponTopicDescription").description("The description of the coupon topic"),
-                                fieldWithPath("data.pageable.sort.empty").description("Whether the sort is empty"),
-                                fieldWithPath("data.pageable.sort.sorted").description("Whether the sort is sorted"),
-                                fieldWithPath("data.pageable.sort.unsorted").description("Whether the sort is unsorted"),
-                                fieldWithPath("data.pageable.offset").description("Offset from the beginning of the dataset"),
-                                fieldWithPath("data.pageable.pageSize").description("The size of the page"),
-                                fieldWithPath("data.pageable.pageNumber").description("The current page number"),
-                                fieldWithPath("data.pageable.paged").description("Whether the response is paged"),
-                                fieldWithPath("data.pageable.unpaged").description("Whether the response is unpaged"),
-                                fieldWithPath("data.last").description("Whether this is the last page"),
-                                fieldWithPath("data.totalElements").description("Total number of elements"),
-                                fieldWithPath("data.totalPages").description("Total number of pages"),
-                                fieldWithPath("data.size").description("Size of the page"),
-                                fieldWithPath("data.number").description("The current page number (zero-based)"),
-                                fieldWithPath("data.sort.empty").description("Whether the sort criteria is empty"),
-                                fieldWithPath("data.sort.sorted").description("Whether the data is sorted"),
-                                fieldWithPath("data.sort.unsorted").description("Whether the data is unsorted"),
-                                fieldWithPath("data.first").description("Whether this is the first page"),
-                                fieldWithPath("data.numberOfElements").description("Number of elements on this page"),
-                                fieldWithPath("data.empty").description("Whether the content is empty")
+                                fieldWithPath("code").description("HTTP 응답 코드"),
+                                fieldWithPath("status").description("HTTP 응답 상태"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.content[].couponCode").description("쿠폰 코드"),
+                                fieldWithPath("data.content[].expirationTime").description("쿠폰 만료 시간"),
+                                fieldWithPath("data.content[].redeemed").description("쿠폰 사용 여부"),
+                                fieldWithPath("data.content[].couponTopicName").description("쿠폰 주제 이름"),
+                                fieldWithPath("data.content[].couponTopicDescription").description("쿠폰 주제 설명"),
+                                fieldWithPath("data.pageable.sort.empty").description("정렬 조건이 비어 있는지 여부"),
+                                fieldWithPath("data.pageable.sort.sorted").description("정렬 여부"),
+                                fieldWithPath("data.pageable.sort.unsorted").description("비정렬 여부"),
+                                fieldWithPath("data.pageable.offset").description("데이터셋 시작 위치"),
+                                fieldWithPath("data.pageable.pageSize").description("페이지 크기"),
+                                fieldWithPath("data.pageable.pageNumber").description("현재 페이지 번호"),
+                                fieldWithPath("data.pageable.paged").description("페이지로 응답되었는지 여부"),
+                                fieldWithPath("data.pageable.unpaged").description("페이지가 아닌 응답인지 여부"),
+                                fieldWithPath("data.last").description("마지막 페이지인지 여부"),
+                                fieldWithPath("data.totalElements").description("전체 요소 수"),
+                                fieldWithPath("data.totalPages").description("전체 페이지 수"),
+                                fieldWithPath("data.size").description("페이지 크기"),
+                                fieldWithPath("data.number").description("현재 페이지 번호 (0부터 시작)"),
+                                fieldWithPath("data.sort.empty").description("정렬 기준이 비어 있는지 여부"),
+                                fieldWithPath("data.sort.sorted").description("정렬되었는지 여부"),
+                                fieldWithPath("data.sort.unsorted").description("정렬되지 않았는지 여부"),
+                                fieldWithPath("data.first").description("첫 번째 페이지인지 여부"),
+                                fieldWithPath("data.numberOfElements").description("현재 페이지의 요소 수"),
+                                fieldWithPath("data.empty").description("컨텐츠가 비어 있는지 여부")
                         )
                 ));
     }
+
 
     @Test
     @DisplayName("쿠폰 업데이트 테스트")
@@ -147,5 +148,38 @@ public class CouponControllerTest {
                         commonRequestFields(),
                         commonResponseFields()
                 ));
+    }
+
+    @Test
+    @DisplayName("쿠폰 토픽 활성/비활성화 테스트")
+    void inactivateCouponTopic() throws Exception {
+        // Mock 서비스 동작 설정
+        UUID couponTopicId = UUID.randomUUID();
+        boolean activation = false;
+
+        // Mock 서비스가 호출되는지 확인하기 위해 설정
+        doNothing().when(couponService).determineActiveness(couponTopicId, activation);
+
+        mockMvc.perform(patch("/api/coupontopics/{couponTopicId}/coupons", couponTopicId)
+                        .param("activation", "false")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.data.message").value("Coupon UPDATE"))
+                .andDo(document("activation-coupon-topic",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("couponTopicId").description("쿠폰 토픽의 고유 ID")
+                        ),
+                        queryParameters(
+                                parameterWithName("activation").description("활성화 여부 (true: 활성화, false: 비활성화)").optional()
+                        ),
+                        commonResponseFields()
+                ));
+
+        // 서비스 메서드가 제대로 호출되었는지 검증
+        verify(couponService, times(1)).determineActiveness(couponTopicId, activation);
     }
 }
