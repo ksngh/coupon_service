@@ -6,33 +6,51 @@ import com.we_assignment.dto.request.CouponRequestDto;
 import com.we_assignment.dto.response.CouponResponseDto;
 import com.we_assignment.enums.SuccessMessage;
 import com.we_assignment.service.CouponService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.UUID;
+
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/coupons")
+@RequestMapping("/api")
 public class CouponController {
 
     private final CouponService couponService;
 
-    @GetMapping()
-    public ResponseEntity<?> getAllCoupons() {
-        CouponResponseDto couponResponseDto = new CouponResponseDto();
-        return ResponseEntity.ok(couponResponseDto);
+    @GetMapping("/coupons")
+    public CustomApiResponse<Page<CouponResponseDto>> getCoupons(
+            @RequestParam(required = false) String couponCode,
+            @RequestParam(required = false) Boolean isRedeemed,
+            @RequestParam(required = false) String couponTopicName,
+            Pageable pageable) {
+
+        Page<CouponResponseDto> couponDtos = couponService.getCoupons(couponCode, isRedeemed, couponTopicName, pageable);
+
+        return CustomApiResponse.ok(couponDtos);
     }
 
-    @PostMapping()
-    public CustomApiResponse<?> createCoupons(@RequestBody CouponRequestDto.Create couponRequestDto) {
+    @PostMapping("/coupons")
+    public CustomApiResponse<?> createCoupons(@Valid @RequestBody CouponRequestDto.Create couponRequestDto) {
         couponService.generateCoupon(couponRequestDto);
-        return CustomApiResponse.ok(new CustomResponseMessage("Coupon" + SuccessMessage.CREATE));
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.CREATE.getMessage()));
     }
 
-    @PatchMapping()
-    public ResponseEntity<?> updateCoupons(@RequestBody CouponRequestDto couponRequestDto) {
-        return ResponseEntity.ok(new CustomResponseMessage("Coupon" + SuccessMessage.UPDATE));
+    @PutMapping("/coupons/{couponId}")
+    public CustomApiResponse<?> updateCoupons(@Valid @RequestBody CouponRequestDto.Update couponRequestDto,
+                                              @PathVariable UUID couponId) {
+        couponService.updateCoupon(couponRequestDto,couponId);
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE.getMessage()));
+    }
+
+    @PatchMapping("/coupontopics/{couponTopicId}/coupons")
+    public CustomApiResponse<?> inactivateCouponTopic(@PathVariable UUID couponTopicId,
+                                                 @RequestParam boolean activation) {
+        couponService.determineActiveness(couponTopicId, activation);
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE.getMessage()));
     }
 
 }

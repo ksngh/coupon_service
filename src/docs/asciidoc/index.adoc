@@ -1,0 +1,17 @@
+= API Documentation
+:toc: left
+== Coupon API
+
+=== Get Coupons
+
+include::build/generated-snippets/get-coupons/http-request.adoc[]
+include::build/generated-snippets/get-coupons/http-response.adoc[]
+include::build/generated-snippets/get-coupons/query-parameters.adoc[]
+include::build/generated-snippets/get-coupons/response-fields.adoc[]
+
+=== Put Coupon
+
+include::build/generated-snippets/update-coupons/http-request.adoc[]
+include::build/generated-snippets/update-coupons/http-response.adoc[]
+include::build/generated-snippets/update-coupons/path-parameters.adoc[]
+include::build/generated-snippets/update-coupons/response-fields.adoc[]

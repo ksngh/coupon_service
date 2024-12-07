@@ -5,7 +5,7 @@ import com.we_assignment.dto.response.UserResponseDto;
 import com.we_assignment.entity.User;
 import com.we_assignment.enums.Role;
 import com.we_assignment.exception.member.MemberNullPointerException;
-import com.we_assignment.repository.UserRepository;
+import com.we_assignment.repository.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

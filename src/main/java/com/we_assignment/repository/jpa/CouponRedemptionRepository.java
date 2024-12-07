@@ -1,4 +1,4 @@
-package com.we_assignment.repository;
+package com.we_assignment.repository.jpa;
 
 import com.we_assignment.entity.CouponRedemption;
 import org.springframework.data.jpa.repository.JpaRepository;

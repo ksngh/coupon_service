@@ -1,4 +1,4 @@
-package com.we_assignment.repository;
+package com.we_assignment.repository.jpa;
 
 import com.we_assignment.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
