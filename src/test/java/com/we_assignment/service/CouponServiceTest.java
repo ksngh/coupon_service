@@ -6,6 +6,7 @@ import com.we_assignment.entity.CouponTopic;
 import com.we_assignment.exception.coupontopic.CouponTopicNullPointerException;
 import com.we_assignment.repository.jpa.CouponRepository;
 import com.we_assignment.repository.jpa.CouponTopicRepository;
+import com.we_assignment.repository.querydsl.CustomCouponRepository;
 import com.we_assignment.util.CouponCodeGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,11 +15,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,7 +31,13 @@ class CouponServiceTest {
     private CouponRepository couponRepository;
 
     @Mock
+    private CustomCouponRepository customCouponRepository;
+
+    @Mock
     private CouponTopicRepository couponTopicRepository;
+
+    private UUID couponTopicId;
+    private List<Coupon> coupons;
 
     @BeforeEach
     void setUp() {
@@ -87,5 +92,53 @@ class CouponServiceTest {
         // When & Then
         assertThrows(CouponTopicNullPointerException.class, () -> couponService.generateCoupon(requestDto),
                 "존재하지 않는 쿠폰 주제 ID로 요청 시 CouponTopicNullPointerException이 발생해야 합니다.");
+    }
+
+    @Test
+    @DisplayName("쿠폰 활성화 테스트")
+    void testDetermineActiveness_Activate() {
+        // Given
+        when(customCouponRepository.findAllCouponsByCouponTopicId(couponTopicId)).thenReturn(coupons);
+        couponTopicId = UUID.randomUUID();
+        coupons = Arrays.asList(
+                Coupon.builder().id(UUID.randomUUID()).isActive(false).build(),
+                Coupon.builder().id(UUID.randomUUID()).isActive(false).build()
+        );
+
+        // When
+        couponService.determineActiveness(couponTopicId, true);
+
+        // Then
+        // 모든 쿠폰이 활성화되었는지 검증
+        coupons.stream().map(Coupon::isActive).forEach(System.out::println);
+        assertTrue(coupons.stream().allMatch(Coupon::isActive), "모든 쿠폰이 활성화 상태여야 함");
+
+        // Repository 메서드 호출 검증
+        verify(customCouponRepository, times(1)).findAllCouponsByCouponTopicId(couponTopicId);
+        verify(couponRepository, times(1)).saveAll(coupons);
+    }
+
+    @Test
+    @DisplayName("쿠폰 비활성화 테스트")
+    void testDetermineActiveness_Inactivate() {
+        // Given
+        couponTopicId = UUID.randomUUID();
+        coupons = Arrays.asList(
+                Coupon.builder().id(UUID.randomUUID()).isActive(true).build(),
+                Coupon.builder().id(UUID.randomUUID()).isActive(true).build()
+        );
+        when(customCouponRepository.findAllCouponsByCouponTopicId(couponTopicId)).thenReturn(coupons);
+
+        // When
+        couponService.determineActiveness(couponTopicId, false);
+
+        // Then
+        // 모든 쿠폰이 비활성화되었는지 검증
+        coupons.stream().map(Coupon::isActive).forEach(System.out::println);
+        assertTrue(coupons.stream().noneMatch(Coupon::isActive), "모든 쿠폰이 비활성화 상태여야 함");
+
+        // Repository 메서드 호출 검증
+        verify(customCouponRepository, times(1)).findAllCouponsByCouponTopicId(couponTopicId);
+        verify(couponRepository, times(1)).saveAll(coupons);
     }
 }

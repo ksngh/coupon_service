@@ -1,28 +1,31 @@
 package com.we_assignment.util;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Execution(ExecutionMode.SAME_THREAD)
 class CouponCodeGeneratorTest {
 
     @Test
     @DisplayName("쿠폰 코드 생성 테스트 (100개)")
     void testGenerateUniqueCodes_SizeAndUniqueness() {
         // Given
-        int n = 100; // 생성할 쿠폰 개수
+        int number = 100; // 생성할 쿠폰 개수
 
         // When
-        Set<String> coupons = CouponCodeGenerator.generateUniqueCodes(n);
+        Set<String> coupons = CouponCodeGenerator.generateUniqueCodes(number);
 
         // Then
         // 1. 정확한 개수 생성 확인
-        assertEquals(n, coupons.size(), "쿠폰 코드의 갯수 : " + n);
+        assertEquals(number, coupons.size(), "쿠폰 코드의 갯수 : " + number);
+        System.out.println(coupons.size());
 
         // 2. 각 코드의 길이가 정확히 16인지 확인
         assertTrue(coupons.stream().allMatch(code -> code.length() == 16),
