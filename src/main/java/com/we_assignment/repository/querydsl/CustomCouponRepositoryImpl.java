@@ -4,6 +4,8 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.we_assignment.dto.response.CouponResponseDto;
+import com.we_assignment.entity.Coupon;
+import com.we_assignment.entity.CouponTopic;
 import com.we_assignment.entity.QCoupon;
 import com.we_assignment.entity.QCouponTopic;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,7 +29,6 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
         QCoupon qCoupon = QCoupon.coupon;
         QCouponTopic qCouponTopic = QCouponTopic.couponTopic;
 
-        // 1. fetchJoin으로 데이터 조회
         List<Tuple> tuples = queryFactory
                 .select(qCoupon.code, qCoupon.isRedeemed, qCouponTopic.name, qCouponTopic.description)
                 .from(qCoupon)
@@ -36,7 +38,6 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        // 2. Tuple을 CouponResponseDto로 매핑
         List<CouponResponseDto> results = tuples.stream()
                 .map(tuple -> new CouponResponseDto(
                         tuple.get(qCoupon.code),
@@ -47,7 +48,6 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
                 ))
                 .toList();
 
-        // 3. 전체 데이터 개수 쿼리
         long totalCount = queryFactory
                 .select(qCoupon.count())
                 .from(qCoupon)
@@ -57,4 +57,18 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
         // 4. Page 객체 반환
         return new PageImpl<>(results, pageable, totalCount);
     }
+
+    @Override
+    public List<Coupon> findAllCouponsByCouponTopicId(UUID couponTopicId) {
+        QCoupon qCoupon = QCoupon.coupon;
+        QCouponTopic qCouponTopic = QCouponTopic.couponTopic;
+
+        return queryFactory
+                .select(qCoupon)
+                .from(qCoupon)
+                .join(qCoupon.couponTopic, qCouponTopic).fetchJoin()
+                .where(qCouponTopic.id.eq(couponTopicId))
+                .fetch();
+    }
+
 }

@@ -38,12 +38,16 @@ public class Coupon extends Timestamped{
     @JoinColumn(name = "coupon_topic_fk", nullable = false)
     private CouponTopic couponTopic;
 
-    private void useCoupon(){
+    public void useCoupon(){
         isRedeemed = true;
     }
 
-    private void expiredCoupon(){
+    public void inActivate(){
         isActive = false;
+    }
+
+    public void activate(){
+        isActive = true;
     }
 
 }

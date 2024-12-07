@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -30,6 +31,7 @@ public class CouponService {
     private final CustomCouponRepository customCouponRepository;
     private final CouponTopicRepository couponTopicRepository;
 
+    @Transactional
     public void generateCoupon(CouponRequestDto.Create couponRequestDto) {
 
         CouponTopic couponTopic = couponTopicRepository.findById(couponRequestDto.getCouponTopicId())
@@ -74,6 +76,7 @@ public class CouponService {
         return predicate;
     }
 
+    @Transactional
     public void updateCoupon(CouponRequestDto.Update couponRequestDto,UUID couponId) {
         couponRepository.save(updateDtoToCoupon(couponRequestDto,couponId));
     }
@@ -93,5 +96,14 @@ public class CouponService {
                 .build();
     }
 
+    @Transactional
+    public void determineActiveness(UUID couponTopicId, boolean isActive){
+        List<Coupon> coupons = customCouponRepository.findAllCouponsByCouponTopicId(couponTopicId);
+        coupons.forEach(coupon -> {
+            if (isActive) coupon.activate();
+            else coupon.inActivate();
+        });
+        couponRepository.saveAll(coupons);
+    }
 
 }

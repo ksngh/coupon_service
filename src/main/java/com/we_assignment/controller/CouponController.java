@@ -16,12 +16,12 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/coupons")
+@RequestMapping("/api")
 public class CouponController {
 
     private final CouponService couponService;
 
-    @GetMapping
+    @GetMapping("/coupons")
     public CustomApiResponse<Page<CouponResponseDto>> getCoupons(
             @RequestParam(required = false) String couponCode,
             @RequestParam(required = false) Boolean isRedeemed,
@@ -33,18 +33,24 @@ public class CouponController {
         return CustomApiResponse.ok(couponDtos);
     }
 
-    @PostMapping()
+    @PostMapping("/coupons")
     public CustomApiResponse<?> createCoupons(@Valid @RequestBody CouponRequestDto.Create couponRequestDto) {
         couponService.generateCoupon(couponRequestDto);
-        return CustomApiResponse.ok(new CustomResponseMessage("Coupon" + SuccessMessage.CREATE.getMessage()));
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.CREATE.getMessage()));
     }
 
-    @PutMapping("/{couponId}")
+    @PutMapping("/coupons/{couponId}")
     public CustomApiResponse<?> updateCoupons(@Valid @RequestBody CouponRequestDto.Update couponRequestDto,
                                               @PathVariable UUID couponId) {
         couponService.updateCoupon(couponRequestDto,couponId);
-        return CustomApiResponse.ok(new CustomResponseMessage("Coupon" + SuccessMessage.UPDATE.getMessage()));
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE.getMessage()));
     }
 
+    @PatchMapping("/coupontopics/{couponTopicId}/coupons")
+    public CustomApiResponse<?> inactivateCouponTopic(@PathVariable UUID couponTopicId,
+                                                 @RequestParam boolean activation) {
+        couponService.determineActiveness(couponTopicId, activation);
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE.getMessage()));
+    }
 
 }

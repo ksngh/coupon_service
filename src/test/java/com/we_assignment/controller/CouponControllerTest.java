@@ -69,7 +69,7 @@ public class CouponControllerTest {
                 .willReturn(mockPage);
 
         // API 호출 및 문서화
-        mockMvc.perform(get("/coupons")
+        mockMvc.perform(get("/api/coupons")
                         .param("couponCode", "ABC123XYZ")
                         .param("isRedeemed", "false")
                         .param("couponTopicName", "Holiday Discount")
@@ -134,7 +134,7 @@ public class CouponControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/coupons/{couponId}", UUID.randomUUID())
+        mockMvc.perform(put("/api/coupons/{couponId}", UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())
