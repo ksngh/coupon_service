@@ -1,7 +1,7 @@
 package com.we_assignment.controller;
 
 import com.we_assignment.dto.response.CouponResponseDto;
-import com.we_assignment.service.CouponService;
+import com.we_assignment.service.coupon.CouponService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

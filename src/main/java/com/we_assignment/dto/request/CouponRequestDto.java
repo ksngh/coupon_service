@@ -1,11 +1,9 @@
 package com.we_assignment.dto.request;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,7 +12,7 @@ public class CouponRequestDto {
 
     @Getter
     @AllArgsConstructor
-    public static class Create{
+    public static class Create {
 
         @NotNull(message = "CouponTopic ID는 필수 입력값입니다.")
         private final UUID couponTopicId;
@@ -26,7 +24,7 @@ public class CouponRequestDto {
 
     @Getter
     @AllArgsConstructor
-    public static class Update{
+    public static class Update {
 
         @NotNull(message = "CouponTopic ID는 필수 입력값입니다.")
         private final UUID couponTopicId;

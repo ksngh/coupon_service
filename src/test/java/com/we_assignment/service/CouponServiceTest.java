@@ -7,6 +7,7 @@ import com.we_assignment.exception.coupontopic.CouponTopicNullPointerException;
 import com.we_assignment.repository.jpa.CouponRepository;
 import com.we_assignment.repository.jpa.CouponTopicRepository;
 import com.we_assignment.repository.querydsl.CustomCouponRepository;
+import com.we_assignment.service.coupon.CouponService;
 import com.we_assignment.util.CouponCodeGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
