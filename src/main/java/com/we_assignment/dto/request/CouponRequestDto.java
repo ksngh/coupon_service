@@ -31,9 +31,6 @@ public class CouponRequestDto {
         @NotNull(message = "CouponTopic ID는 필수 입력값입니다.")
         private final UUID couponTopicId;
 
-        @NotNull(message = "Coupon ID는 필수 입력값입니다.")
-        private final UUID couponId;
-
         private String code;
         private boolean isRedeemed;
         private boolean isActive;

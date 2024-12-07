@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/coupons")
@@ -34,13 +36,14 @@ public class CouponController {
     @PostMapping()
     public CustomApiResponse<?> createCoupons(@Valid @RequestBody CouponRequestDto.Create couponRequestDto) {
         couponService.generateCoupon(couponRequestDto);
-        return CustomApiResponse.ok(new CustomResponseMessage("Coupon" + SuccessMessage.CREATE));
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon" + SuccessMessage.CREATE.getMessage()));
     }
 
-    @PutMapping()
-    public CustomApiResponse<?> updateCoupons(@Valid @RequestBody CouponRequestDto.Update couponRequestDto) {
-        couponService.updateDtoToCoupon(couponRequestDto);
-        return CustomApiResponse.ok(new CustomResponseMessage("Coupon" + SuccessMessage.UPDATE));
+    @PutMapping("/{couponId}")
+    public CustomApiResponse<?> updateCoupons(@Valid @RequestBody CouponRequestDto.Update couponRequestDto,
+                                              @PathVariable UUID couponId) {
+        couponService.updateCoupon(couponRequestDto,couponId);
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon" + SuccessMessage.UPDATE.getMessage()));
     }
 
 

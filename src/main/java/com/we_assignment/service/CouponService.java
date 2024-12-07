@@ -50,13 +50,12 @@ public class CouponService {
     }
 
     public Page<CouponResponseDto> getCoupons(String couponCode, Boolean isRedeemed, String couponTopicName, Pageable pageable) {
-        BooleanExpression predicate = createCouponPredicate(couponCode,isRedeemed,couponTopicName);
-        return customCouponRepository.findAllCouponDetails(predicate,pageable);
+        BooleanExpression predicate = createCouponPredicate(couponCode, isRedeemed, couponTopicName);
+        return customCouponRepository.findAllCouponDetails(predicate, pageable);
     }
 
 
-
-    public BooleanExpression createCouponPredicate(String couponCode, Boolean isRedeemed, String couponTopicName){
+    public BooleanExpression createCouponPredicate(String couponCode, Boolean isRedeemed, String couponTopicName) {
         QCoupon c = QCoupon.coupon;
         QCouponTopic ct = QCouponTopic.couponTopic;
 
@@ -75,11 +74,11 @@ public class CouponService {
         return predicate;
     }
 
-    public void updateCoupon(CouponRequestDto.Update couponRequestDto) {
-        couponRepository.save(updateDtoToCoupon(couponRequestDto));
+    public void updateCoupon(CouponRequestDto.Update couponRequestDto,UUID couponId) {
+        couponRepository.save(updateDtoToCoupon(couponRequestDto,couponId));
     }
 
-    public Coupon updateDtoToCoupon(CouponRequestDto.Update couponRequestDto) {
+    public Coupon updateDtoToCoupon(CouponRequestDto.Update couponRequestDto,UUID couponId) {
 
         CouponTopic couponTopic = couponTopicRepository
                 .findById(couponRequestDto.getCouponTopicId())
@@ -87,15 +86,12 @@ public class CouponService {
 
         return Coupon.builder()
                 .couponTopic(couponTopic)
-                .id(couponRequestDto.getCouponId())
+                .id(couponId)
                 .code(couponRequestDto.getCode())
                 .isActive(couponRequestDto.isActive())
                 .isRedeemed(couponRequestDto.isRedeemed())
                 .build();
     }
-
-
-
 
 
 }
