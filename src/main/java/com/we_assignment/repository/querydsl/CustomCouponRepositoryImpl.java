@@ -1,11 +1,9 @@
 package com.we_assignment.repository.querydsl;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.we_assignment.dto.response.CouponResponseDto;
 import com.we_assignment.entity.Coupon;
-import com.we_assignment.entity.CouponTopic;
 import com.we_assignment.entity.QCoupon;
 import com.we_assignment.entity.QCouponTopic;
 import lombok.RequiredArgsConstructor;
@@ -29,24 +27,24 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
         QCoupon qCoupon = QCoupon.coupon;
         QCouponTopic qCouponTopic = QCouponTopic.couponTopic;
 
-        List<Tuple> tuples = queryFactory
-                .select(qCoupon.code, qCoupon.isRedeemed, qCouponTopic.name, qCouponTopic.description)
-                .from(qCoupon)
+        List<Coupon> coupons = queryFactory
+                .selectFrom(qCoupon)
                 .join(qCoupon.couponTopic, qCouponTopic).fetchJoin()
                 .where(predicate)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        List<CouponResponseDto> results = tuples.stream()
-                .map(tuple -> new CouponResponseDto(
-                        tuple.get(qCoupon.code),
-                        tuple.get(qCoupon.expiredAt),
-                        Boolean.TRUE.equals(tuple.get(qCoupon.isRedeemed)),
-                        tuple.get(qCouponTopic.name),
-                        tuple.get(qCouponTopic.description)
+        List<CouponResponseDto> results = coupons.stream()
+                .map(coupon -> new CouponResponseDto(
+                        coupon.getCode(),
+                        coupon.getExpiredAt(),
+                        Boolean.TRUE.equals(coupon.isRedeemed()),
+                        coupon.getCouponTopic().getName(),
+                        coupon.getCouponTopic().getDescription()
                 ))
                 .toList();
+
 
         long totalCount = queryFactory
                 .select(qCoupon.count())

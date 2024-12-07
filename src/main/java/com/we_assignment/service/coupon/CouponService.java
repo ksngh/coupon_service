@@ -18,11 +18,13 @@ import com.we_assignment.repository.querydsl.CustomCouponRepository;
 import com.we_assignment.util.CouponCodeGenerator;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -30,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CouponService {
 
     private final CouponRepository couponRepository;
@@ -44,17 +47,18 @@ public class CouponService {
         CouponTopic couponTopic = couponTopicRepository.findById(couponRequestDto.getCouponTopicId())
                 .orElseThrow(CouponTopicNullPointerException::new);
         Set<String> codes = CouponCodeGenerator.generateUniqueCodes(couponRequestDto.getCouponQuantity());
-        List<Coupon> coupons = codeToCoupon(codes, couponTopic);
+        List<Coupon> coupons = codeToCoupon(codes, couponTopic,couponRequestDto.getExpiredAt());
 
         couponRepository.saveAll(coupons);
 
     }
 
-    public List<Coupon> codeToCoupon(Set<String> codes,CouponTopic couponTopic) {
+    public List<Coupon> codeToCoupon(Set<String> codes, CouponTopic couponTopic, LocalDateTime expiredAt) {
         return codes.stream()
                 .map(code -> Coupon.builder()
                         .id(UUID.randomUUID())
                         .couponTopic(couponTopic)
+                        .expiredAt(expiredAt)
                         .code(code)
                         .build())
                 .toList();
@@ -127,7 +131,7 @@ public class CouponService {
         String lockKey = "coupon:lock:" + couponId;
 
         try {
-            if (couponRedisService.acquireLock(lockKey, 10)) {
+            if (couponRedisService.acquireLock(lockKey, 1000)) {
                 useCoupon(couponId);
             } else {
                 throw new CouponLockException();
@@ -138,8 +142,9 @@ public class CouponService {
     }
 
     @Transactional
-    public void useCouponFallback(UUID couponId) {
-
+    public void useCouponFallback(UUID couponId,Throwable throwable) {
+        throwable.printStackTrace();
+        log.info("useCouponFallback");
         try {
             couponMap.compute(couponId, (key, value) -> {
                 if (value == null || !value) {

@@ -17,6 +17,9 @@ public class CouponRequestDto {
         @NotNull(message = "CouponTopic ID는 필수 입력값입니다.")
         private final UUID couponTopicId;
 
+        @NotNull(message = "expired_at은 필수 입력값입니다.")
+        private final LocalDateTime expiredAt;
+
         @NotNull(message = "CouponQuantity는 필수 입력값입니다.")
         @Min(value = 1, message = "CouponQuantity는 0 이상이어야 합니다.")
         private final Integer couponQuantity;
