@@ -5,7 +5,7 @@ import com.we_assignment.common.CustomResponseMessage;
 import com.we_assignment.dto.request.CouponRequestDto;
 import com.we_assignment.dto.response.CouponResponseDto;
 import com.we_assignment.enums.SuccessMessage;
-import com.we_assignment.service.CouponService;
+import com.we_assignment.service.coupon.CouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -50,6 +50,12 @@ public class CouponController {
     public CustomApiResponse<?> updateCouponTopicActivation(@PathVariable UUID couponTopicId,
                                                  @RequestParam boolean activation) {
         couponService.determineActiveness(couponTopicId, activation);
+        return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE));
+    }
+
+    @PatchMapping("coupons/{couponId}")
+    public CustomApiResponse<?> useCoupon(@PathVariable UUID couponId) {
+        couponService.processCoupon(couponId);
         return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE));
     }
 
