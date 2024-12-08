@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Coupon extends Timestamped{
+public class Coupon extends Timestamped {
 
     @Id
     private UUID id;
@@ -38,15 +36,15 @@ public class Coupon extends Timestamped{
     @JoinColumn(name = "coupon_topic_fk", nullable = false)
     private CouponTopic couponTopic;
 
-    public void useCoupon(){
+    public void useCoupon() {
         isRedeemed = true;
     }
 
-    public void inActivate(){
+    public void inActivate() {
         isActive = false;
     }
 
-    public void activate(){
+    public void activate() {
         isActive = true;
     }
 
