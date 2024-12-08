@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,7 +57,7 @@ class CouponServiceTest {
                 .name("Sample Topic")
                 .build();
 
-        CouponRequestDto.Create requestDto = new CouponRequestDto.Create(topicId, quantity);
+        CouponRequestDto.Create requestDto = new CouponRequestDto.Create(topicId, LocalDateTime.now().plusHours(1),quantity);
 
         when(couponTopicRepository.findById(topicId)).thenReturn(Optional.of(couponTopic));
         Set<String> generatedCodes = Set.of("AAAABBBBCCCCDDDD", "BBBBCCCCDDDDEEEE", "CCCCDDDDEEEEFFFF", "DDDDEEEEFFFFGGGG", "EEEEFFFFGGGGHHHH");
@@ -84,7 +85,7 @@ class CouponServiceTest {
     void testGenerateCoupon_TopicNotFound() {
         // Given
         UUID invalidTopicId = UUID.randomUUID();
-        CouponRequestDto.Create requestDto = new CouponRequestDto.Create(invalidTopicId, 5);
+        CouponRequestDto.Create requestDto = new CouponRequestDto.Create(invalidTopicId, LocalDateTime.now().plusHours(1),5);
 
         // Mock 동작 정의
         when(couponTopicRepository.findById(invalidTopicId)).thenReturn(Optional.empty());
