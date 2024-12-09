@@ -17,4 +17,6 @@ public interface CustomCouponRepository {
 
     List<Coupon> findAllCouponsByCouponTopicId(UUID couponTopicId);
 
+    BooleanExpression createCouponPredicate(String couponCode, Boolean isRedeemed, String couponTopicName);
+
 }

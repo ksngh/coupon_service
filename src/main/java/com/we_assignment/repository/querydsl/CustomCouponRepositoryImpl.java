@@ -1,6 +1,7 @@
 package com.we_assignment.repository.querydsl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.we_assignment.dto.response.CouponResponseDto;
 import com.we_assignment.entity.Coupon;
@@ -69,4 +70,22 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
                 .fetch();
     }
 
+    public BooleanExpression createCouponPredicate(String couponCode, Boolean isRedeemed, String couponTopicName) {
+        QCoupon c = QCoupon.coupon;
+        QCouponTopic ct = QCouponTopic.couponTopic;
+
+        BooleanExpression predicate = Expressions.asBoolean(true).isTrue();
+
+        if (couponTopicName != null) {
+            predicate = predicate.and(ct.name.eq(couponTopicName));
+        }
+        if (couponCode != null) {
+            predicate = predicate.and(c.code.eq(couponCode));
+        }
+        if (isRedeemed != null) {
+            predicate = predicate.and(c.isRedeemed.eq(isRedeemed));
+        }
+
+        return predicate;
+    }
 }
