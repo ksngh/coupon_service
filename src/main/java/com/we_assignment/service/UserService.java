@@ -39,6 +39,7 @@ public class UserService {
 
     public User convertCreateDtoToUser(UserRequestDto.SignUp userRequestDto) {
         return User.builder()
+                .id(UUID.randomUUID())
                 .username(userRequestDto.getUsername())
                 .password(userRequestDto.getPassword())
                 .email(userRequestDto.getEmail())

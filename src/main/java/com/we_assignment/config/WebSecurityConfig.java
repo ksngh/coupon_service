@@ -1,7 +1,6 @@
 package com.we_assignment.config;
 
 
-import com.we_assignment.enums.UserRole;
 import com.we_assignment.security.JwtAuthenticationFilter;
 import com.we_assignment.security.JwtAuthorizationFilter;
 import com.we_assignment.security.UserDetailsServiceImpl;
@@ -9,7 +8,6 @@ import com.we_assignment.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -64,8 +62,7 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
-                        .anyRequest()
-                        .permitAll() // 그 외 모든 요청 인증처리
+                        .anyRequest() .permitAll()
         );
 
         // 필터 관리
