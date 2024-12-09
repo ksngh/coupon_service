@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -53,9 +55,10 @@ public class CouponController {
         return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE));
     }
 
-    @PatchMapping("coupons/{couponId}")
-    public CustomApiResponse<?> useCoupon(@PathVariable UUID couponId) {
-        couponService.processCoupon(couponId);
+    @PatchMapping("coupons/{couponCode}")
+    public CustomApiResponse<?> useCoupon(@PathVariable String couponCode,
+                                          @AuthenticationPrincipal UserDetails userDetails) {
+        couponService.processCoupon(couponCode,userDetails);
         return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE));
     }
 

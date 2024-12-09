@@ -1,26 +1,23 @@
 package com.we_assignment.service.coupon;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.we_assignment.dto.request.CouponRequestDto;
 import com.we_assignment.dto.response.CouponResponseDto;
 import com.we_assignment.entity.Coupon;
 import com.we_assignment.entity.CouponTopic;
-import com.we_assignment.entity.QCoupon;
-import com.we_assignment.entity.QCouponTopic;
-import com.we_assignment.exception.coupon.CouponLockException;
-import com.we_assignment.exception.coupon.CouponNullPointerException;
-import com.we_assignment.exception.coupon.CouponUnavailableException;
+import com.we_assignment.exception.coupon.*;
 import com.we_assignment.exception.coupontopic.CouponTopicNullPointerException;
 import com.we_assignment.repository.jpa.CouponRepository;
 import com.we_assignment.repository.jpa.CouponTopicRepository;
 import com.we_assignment.repository.querydsl.CustomCouponRepository;
+import com.we_assignment.service.CouponRedemptionService;
 import com.we_assignment.util.CouponCodeGenerator;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +35,11 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final CustomCouponRepository customCouponRepository;
     private final CouponTopicRepository couponTopicRepository;
+
     private final CouponRedisService couponRedisService;
-    private final ConcurrentHashMap<UUID, Boolean> couponMap = new ConcurrentHashMap<>();
+    private final CouponRedemptionService couponRedemptionService;
+
+    private final ConcurrentHashMap<String, Boolean> couponMap = new ConcurrentHashMap<>();
 
     @Transactional
     public void generateCoupon(CouponRequestDto.Create couponRequestDto) {
@@ -47,7 +47,7 @@ public class CouponService {
         CouponTopic couponTopic = couponTopicRepository.findById(couponRequestDto.getCouponTopicId())
                 .orElseThrow(CouponTopicNullPointerException::new);
         Set<String> codes = CouponCodeGenerator.generateUniqueCodes(couponRequestDto.getCouponQuantity());
-        List<Coupon> coupons = codeToCoupon(codes, couponTopic,couponRequestDto.getExpiredAt());
+        List<Coupon> coupons = codeToCoupon(codes, couponTopic, couponRequestDto.getExpiredAt());
 
         couponRepository.saveAll(coupons);
 
@@ -65,37 +65,17 @@ public class CouponService {
     }
 
     public Page<CouponResponseDto> getCoupons(String couponCode, Boolean isRedeemed, String couponTopicName, Pageable pageable) {
-        BooleanExpression predicate = createCouponPredicate(couponCode, isRedeemed, couponTopicName);
+        BooleanExpression predicate = customCouponRepository.createCouponPredicate(couponCode, isRedeemed, couponTopicName);
         return customCouponRepository.findAllCouponDetails(predicate, pageable);
     }
 
-
-    public BooleanExpression createCouponPredicate(String couponCode, Boolean isRedeemed, String couponTopicName) {
-        QCoupon c = QCoupon.coupon;
-        QCouponTopic ct = QCouponTopic.couponTopic;
-
-        BooleanExpression predicate = Expressions.asBoolean(true).isTrue();
-
-        if (couponTopicName != null) {
-            predicate = predicate.and(ct.name.eq(couponTopicName));
-        }
-        if (couponCode != null) {
-            predicate = predicate.and(c.code.eq(couponCode));
-        }
-        if (isRedeemed != null) {
-            predicate = predicate.and(c.isRedeemed.eq(isRedeemed));
-        }
-
-        return predicate;
-    }
-
     @Transactional
-    public void updateCoupon(CouponRequestDto.Update couponRequestDto,UUID couponId) {
-        Coupon coupon = updateDtoToCoupon(couponRequestDto,couponId);
+    public void updateCoupon(CouponRequestDto.Update couponRequestDto, UUID couponId) {
+        Coupon coupon = updateDtoToCoupon(couponRequestDto, couponId);
         couponRepository.save(coupon);
     }
 
-    public Coupon updateDtoToCoupon(CouponRequestDto.Update couponRequestDto,UUID couponId) {
+    public Coupon updateDtoToCoupon(CouponRequestDto.Update couponRequestDto, UUID couponId) {
 
         CouponTopic couponTopic = couponTopicRepository
                 .findById(couponRequestDto.getCouponTopicId())
@@ -111,7 +91,7 @@ public class CouponService {
     }
 
     @Transactional
-    public void determineActiveness(UUID couponTopicId, boolean isActive){
+    public void determineActiveness(UUID couponTopicId, boolean isActive) {
         List<Coupon> coupons = customCouponRepository.findAllCouponsByCouponTopicId(couponTopicId);
         coupons.forEach(coupon -> {
             if (isActive) coupon.activate();
@@ -120,19 +100,44 @@ public class CouponService {
         couponRepository.saveAll(coupons);
     }
 
-    public void useCoupon(UUID couponId){
-        Coupon coupon = couponRepository.findById(couponId).orElseThrow(CouponNullPointerException::new);
-        coupon.useCoupon();
+    public boolean validateCoupon(String couponId) {
+        Coupon coupon = couponRepository.findByCode(couponId).orElseThrow(CouponNullPointerException::new);
+        if (!coupon.isRedeemed() & coupon.isActive()) {
+            return true;
+        } else {
+            throw new CouponInvalidException();
+        }
+    }
+
+    // 한 사용자가 동일 토픽에 대한 예외처리 필요
+    public boolean validateCouponRedemption(String code) {
+        if (couponRedemptionService.getCouponRedemptionByCouponCode(code).isEmpty()) {
+            return true;
+        } else {
+            throw new UsedCouponException();
+        }
+    }
+
+    public void useCoupon(String code, UserDetails userDetails) {
+        if (validateCoupon(code)) {
+            if (validateCouponRedemption(code)) {
+                Coupon coupon = couponRepository.findByCode(code).orElseThrow(CouponNullPointerException::new);
+                couponRedemptionService.createCouponRedemption(coupon, userDetails);
+                coupon.useCoupon();
+            }
+        } else {
+            throw new CouponUnavailableException();
+        }
     }
 
     @CircuitBreaker(name = "couponService", fallbackMethod = "useCouponFallback")
     @Transactional
-    public void processCoupon(UUID couponId) {
-        String lockKey = "coupon:lock:" + couponId;
+    public void processCoupon(String code, UserDetails userDetails) {
+        String lockKey = "coupon:lock:" + code;
 
         try {
             if (couponRedisService.acquireLock(lockKey, 1000)) {
-                useCoupon(couponId);
+                useCoupon(code, userDetails);
             } else {
                 throw new CouponLockException();
             }
@@ -142,13 +147,13 @@ public class CouponService {
     }
 
     @Transactional
-    public void useCouponFallback(UUID couponId,Throwable throwable) {
+    public void useCouponFallback(String code, Throwable throwable) {
         throwable.printStackTrace();
         log.info("useCouponFallback");
         try {
-            couponMap.compute(couponId, (key, value) -> {
+            couponMap.compute(code, (key, value) -> {
                 if (value == null || !value) {
-                    Coupon coupon = couponRepository.findById(couponId)
+                    Coupon coupon = couponRepository.findByCode(code)
                             .orElseThrow(CouponNullPointerException::new);
                     coupon.useCoupon();
                     couponRepository.save(coupon);
@@ -156,7 +161,7 @@ public class CouponService {
                 }
                 return value;
             });
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new CouponUnavailableException();
         }
 
