@@ -1,6 +1,7 @@
 package com.we_assignment.util;
 
-import com.we_assignment.enums.Role;
+
+import com.we_assignment.enums.UserRole;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -38,7 +39,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username, Role role) {
+    public String createToken(String username, UserRole role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
