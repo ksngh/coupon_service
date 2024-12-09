@@ -3,7 +3,7 @@ package com.we_assignment.service;
 import com.we_assignment.dto.request.UserRequestDto;
 import com.we_assignment.dto.response.UserResponseDto;
 import com.we_assignment.entity.User;
-import com.we_assignment.enums.Role;
+import com.we_assignment.enums.UserRole;
 import com.we_assignment.exception.member.MemberNullPointerException;
 import com.we_assignment.repository.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,34 +31,19 @@ public class UserService {
         return new UserResponseDto(user.getUsername(), user.getEmail());
     }
 
-    public void signUp(UserRequestDto.Create userRequestDto) {
+    public void signUp(UserRequestDto.SignUp userRequestDto) {
         User user = convertCreateDtoToUser(userRequestDto);
         userRepository.save(user);
         log.info("유저 생성: {}", user.getEmail());
     }
 
-    public User convertCreateDtoToUser(UserRequestDto.Create userRequestDto) {
+    public User convertCreateDtoToUser(UserRequestDto.SignUp userRequestDto) {
         return User.builder()
                 .username(userRequestDto.getUsername())
                 .password(userRequestDto.getPassword())
                 .email(userRequestDto.getEmail())
-                .role(Role.USER)
+                .role(UserRole.USER)
                 .build();
-    }
-
-    public User convertUpdateDtoToUser(UserRequestDto.Update userRequestDto) {
-        return User.builder()
-                .username(userRequestDto.getUsername())
-                .password(userRequestDto.getPassword())
-                .email(userRequestDto.getEmail())
-                .role(Role.USER)
-                .build();
-    }
-
-    public void updateUser(UserRequestDto.Update userRequestDto) {
-        User user = convertUpdateDtoToUser(userRequestDto);
-        userRepository.save(user);
-        log.info("유저 수정 : {}", user.getEmail());
     }
 
     public void deleteUser(User user) {

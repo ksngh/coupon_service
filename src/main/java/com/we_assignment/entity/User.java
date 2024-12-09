@@ -1,6 +1,6 @@
 package com.we_assignment.entity;
 
-import com.we_assignment.enums.Role;
+import com.we_assignment.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +32,6 @@ public class User extends Timestamped {
 
     @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
     @Column(name = "role", nullable = false)
-    private Role role;
+    private UserRole role;
 
 }
