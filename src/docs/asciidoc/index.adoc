@@ -25,7 +25,6 @@ include::build/generated-snippets/update-coupons/response-fields.adoc[]
 include::build/generated-snippets/use-coupon/http-request.adoc[]
 include::build/generated-snippets/use-coupon/http-response.adoc[]
 include::build/generated-snippets/use-coupon/path-parameters.adoc[]
-include::build/generated-snippets/use-coupon/request-fields.adoc[]
 include::build/generated-snippets/use-coupon/response-fields.adoc[]
 
 == Coupon Topic API
