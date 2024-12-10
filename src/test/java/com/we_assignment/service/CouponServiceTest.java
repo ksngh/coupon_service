@@ -37,9 +37,6 @@ class CouponServiceTest {
     @Mock
     private CouponTopicRepository couponTopicRepository;
 
-    private UUID couponTopicId;
-    private List<Coupon> coupons;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -99,15 +96,29 @@ class CouponServiceTest {
     @DisplayName("쿠폰 활성화 테스트")
     void testDetermineActiveness_Activate() {
         // Given
-        when(customCouponRepository.findAllCouponsByCouponTopicId(couponTopicId)).thenReturn(coupons);
-        couponTopicId = UUID.randomUUID();
-        coupons = Arrays.asList(
-                Coupon.builder().id(UUID.randomUUID()).isActive(false).build(),
-                Coupon.builder().id(UUID.randomUUID()).isActive(false).build()
+        UUID couponTopicId = UUID.randomUUID();
+        CouponTopic couponTopic = CouponTopic.builder()
+                .id(couponTopicId)
+                .build();
+
+        List<Coupon> coupons = Arrays.asList(
+                Coupon.builder()
+                        .id(UUID.randomUUID())
+                        .couponTopic(couponTopic)
+                        .isActive(false) // 초기 상태: 비활성화
+                        .build(),
+                Coupon.builder()
+                        .id(UUID.randomUUID())
+                        .couponTopic(couponTopic)
+                        .isActive(false) // 초기 상태: 비활성화
+                        .build()
         );
 
+        // Mock 설정
+        when(customCouponRepository.findAllCouponsByCouponTopicId(couponTopicId)).thenReturn(coupons);
+
         // When
-        couponService.determineActiveness(couponTopicId, true);
+        couponService.determineActiveness(couponTopicId, true); // 활성화 요청
 
         // Then
         // 모든 쿠폰이 활성화되었는지 검증
@@ -123,8 +134,8 @@ class CouponServiceTest {
     @DisplayName("쿠폰 비활성화 테스트")
     void testDetermineActiveness_Inactivate() {
         // Given
-        couponTopicId = UUID.randomUUID();
-        coupons = Arrays.asList(
+        UUID couponTopicId = UUID.randomUUID();
+        List<Coupon> coupons = Arrays.asList(
                 Coupon.builder().id(UUID.randomUUID()).isActive(true).build(),
                 Coupon.builder().id(UUID.randomUUID()).isActive(true).build()
         );

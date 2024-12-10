@@ -28,7 +28,10 @@ public class CouponTopicService {
     }
 
     public void couponSoftDelete(CouponTopic couponTopic) {
-        couponRepository.findAllByCouponTopic(couponTopic).forEach(Timestamped::delete);
+        couponRepository.findAllByCouponTopic(couponTopic).forEach(coupon -> {
+            coupon.delete();
+            coupon.inActivate();
+        });
     }
 
     @Transactional

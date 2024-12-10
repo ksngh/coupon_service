@@ -1,5 +1,6 @@
 package com.we_assignment.repository.querydsl;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -28,24 +29,20 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
         QCoupon qCoupon = QCoupon.coupon;
         QCouponTopic qCouponTopic = QCouponTopic.couponTopic;
 
-        List<Coupon> coupons = queryFactory
-                .selectFrom(qCoupon)
-                .join(qCoupon.couponTopic, qCouponTopic).fetchJoin()
+        List<CouponResponseDto> results = queryFactory
+                .select(Projections.constructor(CouponResponseDto.class,
+                        qCoupon.code,
+                        qCoupon.expiredAt,
+                        qCoupon.isRedeemed,
+                        qCoupon.couponTopic.name,
+                        qCoupon.couponTopic.description
+                ))
+                .from(qCoupon)
+                .join(qCoupon.couponTopic, qCouponTopic)
                 .where(predicate)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
-        List<CouponResponseDto> results = coupons.stream()
-                .map(coupon -> new CouponResponseDto(
-                        coupon.getCode(),
-                        coupon.getExpiredAt(),
-                        Boolean.TRUE.equals(coupon.isRedeemed()),
-                        coupon.getCouponTopic().getName(),
-                        coupon.getCouponTopic().getDescription()
-                ))
-                .toList();
-
 
         long totalCount = queryFactory
                 .select(qCoupon.count())

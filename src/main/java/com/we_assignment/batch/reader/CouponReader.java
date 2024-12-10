@@ -1,7 +1,6 @@
 package com.we_assignment.batch.reader;
 
 import com.we_assignment.entity.Coupon;
-import com.we_assignment.entity.CouponRedemption;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;

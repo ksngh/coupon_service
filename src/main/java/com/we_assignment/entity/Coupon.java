@@ -37,15 +37,15 @@ public class Coupon extends Timestamped {
     private CouponTopic couponTopic;
 
     public void useCoupon() {
-        isRedeemed = true;
+        this.isRedeemed = true;
     }
 
     public void inActivate() {
-        isActive = false;
+        this.isActive = false;
     }
 
     public void activate() {
-        isActive = true;
+        this.isActive = true;
     }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,6 +34,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,6 +49,7 @@ public class CouponControllerTest {
     private CouponService couponService;
 
     @Test
+    @WithMockUser(username = "testUser", roles = {"USER"})
     @DisplayName("쿠폰 조회 페이지 테스트")
     void getCouponsPage() throws Exception {
         // Mock 데이터 생성
@@ -74,7 +77,8 @@ public class CouponControllerTest {
                         .param("isRedeemed", "false")
                         .param("couponTopicName", "Holiday Discount")
                         .param("page", "0")
-                        .param("size", "10"))
+                        .param("size", "10")
+                        )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", is(200)))
                 .andExpect(jsonPath("$.status", is("OK")))
@@ -123,6 +127,7 @@ public class CouponControllerTest {
 
 
     @Test
+    @WithMockUser
     @DisplayName("쿠폰 업데이트 테스트")
     void updateCoupons() throws Exception {
         String requestBody = """
@@ -136,6 +141,7 @@ public class CouponControllerTest {
                 """;
 
         mockMvc.perform(put("/api/coupons/{couponId}", UUID.randomUUID())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())
@@ -151,6 +157,7 @@ public class CouponControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("쿠폰 토픽 활성/비활성화 테스트")
     void inactivateCouponTopic() throws Exception {
         // Mock 서비스 동작 설정
@@ -162,6 +169,7 @@ public class CouponControllerTest {
 
         mockMvc.perform(patch("/api/coupontopics/{couponTopicId}/coupons", couponTopicId)
                         .param("activation", "false")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
