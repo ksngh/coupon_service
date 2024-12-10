@@ -1,14 +1,15 @@
 package com.we_assignment.dto.request;
 
-import com.we_assignment.enums.Role;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class UserRequestDto {
 
     @Getter
     @AllArgsConstructor
-    public static class Create{
+    public static class SignUp {
 
         private final String username;
         private final String password;
@@ -18,12 +19,13 @@ public class UserRequestDto {
 
     @Getter
     @AllArgsConstructor
-    public static class Update{
+    @NoArgsConstructor // 기본 생성자 추가
+    public static class SignIn {
+        @NotNull
+        private String email;
 
-        private final String username;
-        private final String password;
-        private final String email;
-        private final Role role;
+        @NotNull
+        private String password;
     }
 
 }

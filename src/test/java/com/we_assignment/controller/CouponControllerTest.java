@@ -47,7 +47,7 @@ public class CouponControllerTest {
     private CouponService couponService;
 
     @Test
-    @DisplayName("쿠폰 생성 페이지 테스트")
+    @DisplayName("쿠폰 조회 페이지 테스트")
     void getCouponsPage() throws Exception {
         // Mock 데이터 생성
         CouponResponseDto dto = new CouponResponseDto(
