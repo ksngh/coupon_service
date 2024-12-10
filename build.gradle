@@ -74,6 +74,9 @@ dependencies {
 
     testImplementation 'org.springframework.security:spring-security-test'
 
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+
 }
 
 tasks.named('test') {
@@ -106,4 +109,8 @@ asciidoctor {
 
 bootJar {
     dependsOn asciidoctor
+    from ("./build/docs/asciidoc/index.html") { // (4)
+        into 'static/docs'
+    }
 }
+
