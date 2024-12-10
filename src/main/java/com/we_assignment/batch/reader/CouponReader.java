@@ -1,6 +1,7 @@
 package com.we_assignment.batch.reader;
 
 import com.we_assignment.entity.Coupon;
+import com.we_assignment.entity.CouponRedemption;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
@@ -13,13 +14,26 @@ import java.util.Map;
 @Component
 public class CouponReader {
     @Bean
-    public JpaPagingItemReader<Coupon> reader(EntityManagerFactory entityManagerFactory) {
+    public JpaPagingItemReader<Coupon> couponSixMonthsReader(EntityManagerFactory entityManagerFactory) {
+        LocalDateTime sixMonthsAgo = LocalDateTime.now().minusMonths(6); // 3개월 전 시간 계산
+
         return new JpaPagingItemReaderBuilder<Coupon>()
                 .name("couponReader")
-                .queryString("SELECT c FROM Coupon c WHERE c.expiredAt < :now")
-                .parameterValues(Map.of("now", LocalDateTime.now()))
+                .queryString("SELECT c FROM Coupon c WHERE c.deletedAt < :sixMonthsAgo")
+                .parameterValues(Map.of("sixMonthsAgo", sixMonthsAgo))
                 .entityManagerFactory(entityManagerFactory)
                 .pageSize(100)
                 .build();
     }
+
+    @Bean
+    public JpaPagingItemReader<Coupon> couponItemReader(EntityManagerFactory entityManagerFactory) {
+        return new JpaPagingItemReaderBuilder<Coupon>()
+                .name("couponItemReader")
+                .queryString("SELECT c FROM Coupon c")
+                .entityManagerFactory(entityManagerFactory)
+                .pageSize(100)
+                .build();
+    }
+
 }

@@ -17,7 +17,7 @@ public class CouponWriter {
     private final MongoTemplate mongoTemplate;
 
     @Bean
-    public ItemWriter<ArchivedCoupon> writer() {
+    public ItemWriter<ArchivedCoupon> couponItemwriter() {
         return items -> {
             mongoTemplate.insertAll(new ArrayList<>(items.getItems()));
         };

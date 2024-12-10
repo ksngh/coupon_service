@@ -1,5 +1,5 @@
 package com.we_assignment.entity.archived;
-import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,7 +21,7 @@ public class ArchivedCoupon {
     private LocalDateTime deletedAt;
 
     private ArchivedCoupon(UUID id, String code, boolean isRedeemed, boolean isActive, LocalDateTime expiredAt,
-                           UUID couponTopicId, LocalDateTime createdAt, LocalDateTime updatedAt,LocalDateTime deletedAt) {
+                           UUID couponTopicId, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = id;
         this.code = code;
         this.isRedeemed = isRedeemed;

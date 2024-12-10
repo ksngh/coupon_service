@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CouponProcessor {
+
     @Bean
-    public ItemProcessor<Coupon, ArchivedCoupon> processor() {
+    public ItemProcessor<Coupon, ArchivedCoupon> couponItemProcessor() {
         return coupon -> ArchivedCoupon.of(
                 coupon.getId(),
                 coupon.getCode(),

@@ -27,7 +27,7 @@ public class User extends Timestamped {
     @Column(name = "email", nullable = false, length = 50, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 50)
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
 
     @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
