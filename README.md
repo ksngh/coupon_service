@@ -56,6 +56,7 @@
 ![coupon drawio](https://github.com/user-attachments/assets/71866c7a-b7d3-4e0d-a701-8294c0e3837f)
 
 
+
 ### 인프라 설명
 
 - **Application Layer**: Spring Boot 기반의 애플리케이션. MVC 패턴으로 작업
@@ -80,7 +81,7 @@
 
 ---
 
-## 주요 기능
+## 주요 기능 (코드 내용 포함)
 
 ### 1. 쿠폰 topic 관리
 
@@ -91,10 +92,72 @@
 
 ### 2. 쿠폰 관리
 
-- 일괄 쿠폰 정보 조회
-- 쿠폰 생성
-- 쿠폰 사용 처리 (코드 입력)
-- 오래된 쿠폰 데이터 관리
+
+<details>
+<summary>일괄 쿠폰 정보 조회 및 검색</summary>
+</br>
+- query dsl을 사용하여, 검색을 위해 필요한 동적 쿼리 생성
+</br>
+    <img src="https://github.com/user-attachments/assets/e5755d8b-6854-4d4b-9f96-71c9bf429622" alt="querydsl" style="border: 1px solid #ddd; border-radius: 5px; width="400px"></br>
+</details>
+
+<details>
+<summary>쿠폰 생성</summary>
+</br>
+- code generator util을 만들어 코드가 겹치지 않게 생성
+</br>
+    <img src="https://github.com/user-attachments/assets/85c3c65f-4564-42b2-9708-cf7b9f89a5b1" alt="codegenerator" style="border: 1px solid #ddd; border-radius: 5px; width="400"></br>
+- custom exception을 터뜨려 예외 처리, 쿠폰 생성 서비스</br>
+    <img src="https://github.com/user-attachments/assets/363062fa-69d8-4779-90ef-f82f6044b6e6" alt="codegenerator" style="border: 1px solid #ddd; border-radius: 5px; width="400"></br>
+
+
+</details>
+
+<details>
+<summary>쿠폰 코드를 입력받아 사용처리</summary>
+</br>
+- code를 입력받으면 우선 검증을 합니다. 사용 되었는지(isRedeemed), 활성화 되었는지(isActive)</br>
+- 검증이 완료되었으면 redis에서 lock key를 생성하여 쿠폰 사용 메서드에 접근하는 것을 막습니다.</br>
+- 접근을 하게되면, 쿠폰은 사용처리가 되고 쿠폰과 유저의 중간 테이블이 생성됩니다.</br>
+- redis의 문제로 빈번한 실패 시에는, resilience4j가 fallback method를 실행시킵니다.</br>
+- 서버의 9090포트로 들어가서 prometheus 로그를 확인하여 circuitbreaker가 어떻게 작동하는지 확인할 수 있습니다.</br>
+- fallback method에서는 ConcurrentHashMap으로 동시성을 제어하였습니다. (단일 서버 한정)</br>
+</br>
+- 
+    <img src="https://github.com/user-attachments/assets/85c3c65f-4564-42b2-9708-cf7b9f89a5b1" alt="codegenerator" style="border: 1px solid #ddd; border-radius: 5px; width="400"></br>
+- custom exception을 터뜨려 예외 처리, 쿠폰 생성 서비스</br>
+    <img src="https://github.com/user-attachments/assets/363062fa-69d8-4779-90ef-f82f6044b6e6" alt="codegenerator" style="border: 1px solid #ddd; border-radius: 5px; width="400"></br>
+
+
+</details>
+<details>
+<summary>오래된 쿠폰 데이터 관리</summary>
+</br>
+- 스프링 배치를 활용하여 지워진 지 6개월 이상 된 쿠폰 데이터를 mongoDB에 마이그래이션 하였습니다.<br/>
+- 배치에서는 job과 step으로 나뉘며, step에서는 reader,writer,proccesor 을 파라미터로 주입받아 100개의 데이터씩 처리합니다.</br>
+- 스케줄링 기능으로 3개월에 한 번씩 동작합니다.</br>
+- 추가로 자주 검색하는 Coupon 테이블의 code 컬럼은 DB에 인덱스를 추가하여 쿼리 성능을 높였습니다.</br>
+</br>
+- index (sql) </br>
+    <img src="https://github.com/user-attachments/assets/aa0b2600-76c4-40f8-a142-c9160e00b33c" alt="index" style="border: 1px solid #ddd; border-radius: 5px;"></br>
+    </br>
+- ItemReader </br>
+    <img src = "https://github.com/user-attachments/assets/590cb489-16a5-4f5b-8951-9cbcb224b4cf" alt="ItemReader" style="border: 1px solid #ddd; border-radius: 5px;"></br>
+    </br>
+- ItemWriter</br>
+    <img src = "https://github.com/user-attachments/assets/6f0daf7f-fbe7-47a6-bd4f-7cf2b99d2dec" alt = "ItemWriter" style="border: 1px solid #ddd; border-radius: 5px;"></br>
+    </br>    
+- ItemProcessor </br>
+    <img src = "https://github.com/user-attachments/assets/e4bc4d30-bf06-4459-baf5-4e30d2265637" alt="ItemProcessor" style="border: 1px solid #ddd; border-radius: 5px;"></br>
+    </br>
+- BatchConfig </br>
+    <img src = "https://github.com/user-attachments/assets/613e0e30-bc12-484b-88ae-2bf8483308f2" alt="ItemProcessor" style="border: 1px solid #ddd; border-radius: 5px;"></br>
+    </br>
+- BatchService </br>
+    <img src="https://github.com/user-attachments/assets/26283775-4288-41d4-9b41-01ed3cfb74cc" alt="batchservice" style="border: 1px solid #ddd; border-radius: 5px;">
+    </br>
+</details>
+
 
 ### 3. 사용자 관리
 
