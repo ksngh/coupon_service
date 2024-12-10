@@ -2,7 +2,8 @@
 
 ## 프로젝트 개요
 
-사용자에게 쿠폰을 생성, 관리, 사용 및 조회하는 기능을 제공합니다.
+사용자에게 쿠폰을 생성, 관리, 사용 및 조회하는 기능을 제공합니다.</br>
+**시연 영상**과 **주요 기능**은 토글을 열어서 확인 가능합니다
 
 ---
 
@@ -53,7 +54,7 @@
 ## 인프라 설계
 
 서비스의 인프라는 다음과 같이 구성되어 있습니다:
-![coupon drawio](https://github.com/user-attachments/assets/71866c7a-b7d3-4e0d-a701-8294c0e3837f)
+![coupon drawio](https://github.com/user-attachments/assets/ef26f6cc-4598-4868-a4b9-31a53e63f4f4)
 
 
 
@@ -72,37 +73,32 @@
 
 1. 회원 가입 - 로그인 (jwt 토큰 발급)
 2. 쿠폰 토픽 생성 - 쿠폰 생성 - 쿠폰 토픽으로 일괄 비활성화 처리
-3. 쿠폰 일괄 조회 및 필터처리 확인
+3. 쿠폰 일괄 조회 및 검색 기능 확인
 4. 쿠폰 코드로 쿠폰 사용 처리 하기
     1. 쿠폰 사용 오류 내서 fallback 함수 발동하는지 확인
     2. prometheus로 fallback 확인
 5. 배치를 통해 쿠폰 데이터 mongoDB로 마이그레이션 후 일괄 삭제
-6. 테스트 코드 실행 후 REST Docs 생성 확인하기
+6. build 후 rest docs (api 명세서) 확인하기
 
 <details>
-<summary>영상 내용</summary>
+<summary> <strong> 영상 내용 (클릭) </strong> </summary>
 </br>
+1. 회원 가입 - 로그인 (jwt 토큰 발급)</br>
+2. 쿠폰 토픽 생성 - 쿠폰 생성 - 쿠폰 토픽으로 일괄 비활성화 처리</br>
+3. 쿠폰 일괄 조회 및 검색 기능 확인</br>
 4. 쿠폰 코드로 쿠폰 사용 처리하기</br>
-b. prometheus로 fallback 확인하기.</br>
 
+- 쿠폰 사용 오류 내고 prometheus로 fallback 확인하기</br>
 
 https://github.com/user-attachments/assets/1786f95c-54d9-4101-9a6b-d68d21271449
-
-
-
 
 5. 배치를 통해 데이터 마이그레이션 (시연 영상에서는 즉시 마이그레이션 됩니다.)</br>
 
 </br>
 
-
 https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
 
-
-
-
-
-
+6. build 후 rest docs (api 명세서) 확인하기
 
 </details>
 
@@ -114,6 +110,7 @@ https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
 
 - 쿠폰 주제 생성
 - 쿠폰 주제 조회
+- 주제별 쿠폰 삭제 (soft delete)
 <details>
 <summary>주제별 쿠폰 활성화 / 비활성화</summary>
 </br>
@@ -121,9 +118,8 @@ https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
     <img src="https://github.com/user-attachments/assets/6ee92252-9cdc-41e4-b389-9999053e56aa" alt="activationcontroller" style="border: 1px solid #ddd; border-radius: 5px; width="400px"></br>
 - service</br>
 <img src="https://github.com/user-attachments/assets/61088bee-f4f2-4417-8143-11c590e3148f" alt="activationcontroller" style="border: 1px solid #ddd; border-radius: 5px; width="400px"></br>
-
 </details>
-- 주제별 쿠폰 삭제 (soft delete)
+
 
 ### 2. 쿠폰 관리
 
@@ -207,7 +203,6 @@ https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
 ### 1. 쿠폰 사용시 발생하는 동시성 문제
 
 - **문제**: 쿠폰 사용 시 여러 사용자가 동시에 요청을 보내면 중복 사용 발생.
-- **원인**: 데이터베이스 락이 적용되지 않아 동시 업데이트가 발생.
 - **해결**: Redis를 활용하여 동시 요청 처리, Redis에 문제 발생 시 resilience4j를 통해 fallback 메소드 실행
 
 ### 2. 오래된 데이터 누적 시 발생하는 쿼리 성능 감소 문제
@@ -218,6 +213,11 @@ https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
 ---
 
 ## 개선점
+- 요구 사항에 따라, reentrantklock이나 메시지 큐로 동시성을 해결할 수 있을 거 같습니다.
+- jpa repository를 직접 상속받지 않고, 따로 repository 인터페이스를 만들고 상속받는 구조가 더 명시적일 것 같습니다.
+- exception의 처리 또한 내용이 중복되기 때문에, 상속 구조로 만들면 재사용성이 더 높아질 거 같습니다.
+- querydsl의 Q엔티티 또한 static으로 빼두면 계속해서 객체를 생성하지 않을 수 있습니다.
+- 현재는 괜찮지만, booleanExpression도 그 요소 하나하나 생성해 두는게 재사용성을 높일 수 있을 것 같습니다.
 
 ---
 
@@ -227,12 +227,15 @@ https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
 
 git clone 
 
-cd coupon-service
+cd we-assignment
 
-### 2. Build and Run
+### 2. pull docker image
 
-### 3. API 문서 확인
+### 3. Build and Run
 
+### 4. API 문서 확인
+
+빌드 후
 rest Docs를 통해 API 명세를 확인할 수 있습니다:
 
 ---
