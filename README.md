@@ -66,18 +66,45 @@
 
 ---
 
-## 시현 영상
+## 시연 영상
 
-시현은 POST MAN과 intelliJ IDE로 진행하였으며, 순서는 다음과 같습니다.
+시연은 POST MAN과 intelliJ IDE로 진행하였으며, 순서는 다음과 같습니다.
 
 1. 회원 가입 - 로그인 (jwt 토큰 발급)
 2. 쿠폰 토픽 생성 - 쿠폰 생성 - 쿠폰 토픽으로 일괄 비활성화 처리
 3. 쿠폰 일괄 조회 및 필터처리 확인
 4. 쿠폰 코드로 쿠폰 사용 처리 하기
     1. 쿠폰 사용 오류 내서 fallback 함수 발동하는지 확인
-    2. prometheus로 fallback 로그 확인
+    2. prometheus로 fallback 확인
 5. 배치를 통해 쿠폰 데이터 mongoDB로 마이그레이션 후 일괄 삭제
 6. 테스트 코드 실행 후 REST Docs 생성 확인하기
+
+<details>
+<summary>영상 내용</summary>
+</br>
+4. 쿠폰 코드로 쿠폰 사용 처리하기</br>
+b. prometheus로 fallback 확인하기.</br>
+
+
+https://github.com/user-attachments/assets/1786f95c-54d9-4101-9a6b-d68d21271449
+
+
+
+
+5. 배치를 통해 데이터 마이그레이션 (시연 영상에서는 즉시 마이그레이션 됩니다.)</br>
+
+</br>
+
+
+https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
+
+
+
+
+
+
+
+</details>
 
 ---
 
@@ -87,7 +114,15 @@
 
 - 쿠폰 주제 생성
 - 쿠폰 주제 조회
-- 주제별 쿠폰 활성화 / 비활성화
+<details>
+<summary>주제별 쿠폰 활성화 / 비활성화</summary>
+</br>
+- controller</br>
+    <img src="https://github.com/user-attachments/assets/6ee92252-9cdc-41e4-b389-9999053e56aa" alt="activationcontroller" style="border: 1px solid #ddd; border-radius: 5px; width="400px"></br>
+- service</br>
+<img src="https://github.com/user-attachments/assets/61088bee-f4f2-4417-8143-11c590e3148f" alt="activationcontroller" style="border: 1px solid #ddd; border-radius: 5px; width="400px"></br>
+
+</details>
 - 주제별 쿠폰 삭제 (soft delete)
 
 ### 2. 쿠폰 관리
@@ -117,7 +152,7 @@
 <summary>쿠폰 코드를 입력받아 사용처리</summary>
 </br>
 - code를 입력받으면 우선 검증을 합니다. 사용 되었는지(isRedeemed), 활성화 되었는지(isActive)</br>
-- 검증이 완료되었으면 redis에서 lock key를 생성하여 쿠폰 사용 메서드에 접근하는 것을 막습니다.</br>
+- 검증이 완료되었으면 redis에서 lock key를 생성하여 쿠폰 사용 메서드에 동시에 접근하는 것을 막습니다.</br>
 - 접근을 하게되면, 쿠폰은 사용처리가 되고 쿠폰과 유저의 중간 테이블이 생성됩니다.</br>
 - redis의 문제로 빈번한 실패 시에는, resilience4j가 fallback method를 실행시킵니다.</br>
 - 서버의 9090포트로 들어가서 prometheus 로그를 확인하여 circuitbreaker가 어떻게 작동하는지 확인할 수 있습니다.</br>
@@ -145,13 +180,14 @@
     <img src = "https://github.com/user-attachments/assets/590cb489-16a5-4f5b-8951-9cbcb224b4cf" alt="ItemReader" style="border: 1px solid #ddd; border-radius: 5px;"></br>
     </br>
 - ItemWriter</br>
-    <img src = "https://github.com/user-attachments/assets/6f0daf7f-fbe7-47a6-bd4f-7cf2b99d2dec" alt = "ItemWriter" style="border: 1px solid #ddd; border-radius: 5px;"></br>
+    <img src = "https://github.com/user-attachments/assets/508a503b-a8d3-4496-97be-a0d5df0c75b0" alt = "ItemWriter1" style="border: 1px solid #ddd; border-radius: 5px;"></br>
+    <img src = "https://github.com/user-attachments/assets/b98d0eaf-81e9-40be-835d-4fa951670037" alt = "ItemWriter2" style="border: 1px solid #ddd; border-radius: 5px;"></br>
     </br>    
 - ItemProcessor </br>
     <img src = "https://github.com/user-attachments/assets/e4bc4d30-bf06-4459-baf5-4e30d2265637" alt="ItemProcessor" style="border: 1px solid #ddd; border-radius: 5px;"></br>
     </br>
 - BatchConfig </br>
-    <img src = "https://github.com/user-attachments/assets/613e0e30-bc12-484b-88ae-2bf8483308f2" alt="ItemProcessor" style="border: 1px solid #ddd; border-radius: 5px;"></br>
+    <img src = "https://github.com/user-attachments/assets/26778a7c-40cf-4218-aef2-6b2bacce81c2" alt="batchconfig" style="border: 1px solid #ddd; border-radius: 5px;"></br>
     </br>
 - BatchService </br>
     <img src="https://github.com/user-attachments/assets/26283775-4288-41d4-9b41-01ed3cfb74cc" alt="batchservice" style="border: 1px solid #ddd; border-radius: 5px;">
