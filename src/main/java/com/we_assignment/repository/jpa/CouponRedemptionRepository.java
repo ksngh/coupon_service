@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface CouponRedemptionRepository extends JpaRepository<CouponRedemption, UUID> {
 
     Optional<CouponRedemption> findByCoupon(Coupon coupon);
+
+    void deleteByCouponId(UUID couponId);
 }

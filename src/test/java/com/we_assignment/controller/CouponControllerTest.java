@@ -2,6 +2,7 @@ package com.we_assignment.controller;
 
 import com.we_assignment.dto.response.CouponResponseDto;
 import com.we_assignment.service.coupon.CouponService;
+import com.we_assignment.util.RestDocsTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,6 +47,56 @@ public class CouponControllerTest {
 
     @MockitoBean
     private CouponService couponService;
+
+    @Test
+    @WithMockUser
+    @DisplayName("쿠폰 생성 테스트")
+    void generateCoupons() throws Exception {
+        String requestBody = """
+            {
+                "couponTopicId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                "expiredAt": "2024-12-31T23:59:59",
+                "couponQuantity": 10
+            }
+            """;
+
+        mockMvc.perform(post("/api/coupons")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andDo(document("create-coupons",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("couponTopicId").description("쿠폰 주제의 고유 ID"),
+                                fieldWithPath("expiredAt").description("쿠폰 만료 날짜"),
+                                fieldWithPath("couponQuantity").description("생성할 쿠폰의 수")
+                        ),
+                        RestDocsTestUtils.commonResponseFields()
+                ));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("쿠폰 사용 테스트")
+    void useCoupon() throws Exception {
+        String couponCode = "SUMMER2024120700";
+
+        mockMvc.perform(patch("/api/coupons/{couponCode}", couponCode)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(document("use-coupon",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("couponCode").description("사용할 쿠폰의 코드")
+                        ),
+                        RestDocsTestUtils.commonResponseFields()
+                ));
+    }
+
 
     @Test
     @WithMockUser(username = "testUser", roles = {"USER"})

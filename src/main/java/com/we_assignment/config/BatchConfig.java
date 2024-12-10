@@ -35,12 +35,15 @@ public class BatchConfig {
     @Bean
     public Step archiveCouponsStep(JpaPagingItemReader<Coupon> couponItemReader,
                                    ItemProcessor<Coupon, ArchivedCoupon> couponItemProcessor,
-                                   ItemWriter<ArchivedCoupon> couponItemWriter) {
+                                   ItemWriter<ArchivedCoupon> compositeItemWriter
+                                   ) {
         return new StepBuilder("archiveCouponsStep", jobRepository)
                 .<Coupon, ArchivedCoupon>chunk(100, transactionManager)
                 .reader(couponItemReader)
                 .processor(couponItemProcessor)
-                .writer(couponItemWriter)
+                .writer(compositeItemWriter)
                 .build();
     }
+
+
 }

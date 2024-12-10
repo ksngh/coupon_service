@@ -12,9 +12,10 @@ import java.util.Map;
 
 @Component
 public class CouponReader {
+
     @Bean
     public JpaPagingItemReader<Coupon> couponSixMonthsReader(EntityManagerFactory entityManagerFactory) {
-        LocalDateTime sixMonthsAgo = LocalDateTime.now().minusMonths(6); // 3개월 전 시간 계산
+        LocalDateTime sixMonthsAgo = LocalDateTime.now().minusMonths(6);
 
         return new JpaPagingItemReaderBuilder<Coupon>()
                 .name("couponReader")

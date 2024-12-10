@@ -6,7 +6,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CouponCodeGenerator {
 
-
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int CODE_LENGTH = 16;
 
@@ -27,3 +26,4 @@ public class CouponCodeGenerator {
         return uniqueCodes;
     }
 }
+

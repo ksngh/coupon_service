@@ -50,7 +50,6 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
                 .where(predicate)
                 .fetchOne();
 
-        // 4. Page 객체 반환
         return new PageImpl<>(results, pageable, totalCount);
     }
 

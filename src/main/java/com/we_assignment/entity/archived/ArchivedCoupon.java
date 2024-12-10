@@ -1,5 +1,6 @@
 package com.we_assignment.entity.archived;
 
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Document(collection = "archived_coupons")
+@Getter
 public class ArchivedCoupon {
 
     @Id
