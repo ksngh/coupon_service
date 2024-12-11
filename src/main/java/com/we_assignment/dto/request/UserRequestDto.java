@@ -1,7 +1,9 @@
 package com.we_assignment.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class UserRequestDto {
 
@@ -17,10 +19,13 @@ public class UserRequestDto {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor // 기본 생성자 추가
     public static class SignIn {
+        @NotNull
+        private String email;
 
-        private final String email;
-        private final String password;
+        @NotNull
+        private String password;
     }
 
 }

@@ -1,28 +1,31 @@
 = API Documentation
 :toc: left
+
 == Coupon API
 
-=== Get Coupons
+=== create Coupons
+include::build/generated-snippets/create-coupons/http-request.adoc[]
+include::build/generated-snippets/create-coupons/http-response.adoc[]
+include::build/generated-snippets/create-coupons/request-fields.adoc[]
+include::build/generated-snippets/create-coupons/response-fields.adoc[]
 
+=== Get Coupons
 include::build/generated-snippets/get-coupons/http-request.adoc[]
 include::build/generated-snippets/get-coupons/http-response.adoc[]
 include::build/generated-snippets/get-coupons/query-parameters.adoc[]
 include::build/generated-snippets/get-coupons/response-fields.adoc[]
 
 === Put Coupon
-
 include::build/generated-snippets/update-coupons/http-request.adoc[]
 include::build/generated-snippets/update-coupons/http-response.adoc[]
 include::build/generated-snippets/update-coupons/path-parameters.adoc[]
 include::build/generated-snippets/update-coupons/response-fields.adoc[]
 
-=== Patch Coupon (activation)
-
-include::build/generated-snippets/activation-coupon-topic/http-request.adoc[]
-include::build/generated-snippets/activation-coupon-topic/http-response.adoc[]
-include::build/generated-snippets/activation-coupon-topic/path-parameters.adoc[]
-include::build/generated-snippets/activation-coupon-topic/query-parameters.adoc[]
-include::build/generated-snippets/activation-coupon-topic/response-fields.adoc[]
+=== Use Coupon (patch)
+include::build/generated-snippets/use-coupon/http-request.adoc[]
+include::build/generated-snippets/use-coupon/http-response.adoc[]
+include::build/generated-snippets/use-coupon/path-parameters.adoc[]
+include::build/generated-snippets/use-coupon/response-fields.adoc[]
 
 == Coupon Topic API
 
@@ -37,3 +40,10 @@ include::build/generated-snippets/create-coupon-topic/http-request.adoc[]
 include::build/generated-snippets/create-coupon-topic/http-response.adoc[]
 include::build/generated-snippets/create-coupon-topic/request-fields.adoc[]
 include::build/generated-snippets/create-coupon-topic/response-fields.adoc[]
+
+=== Patch Coupon (activation)
+include::build/generated-snippets/activation-coupon-topic/http-request.adoc[]
+include::build/generated-snippets/activation-coupon-topic/http-response.adoc[]
+include::build/generated-snippets/activation-coupon-topic/path-parameters.adoc[]
+include::build/generated-snippets/activation-coupon-topic/query-parameters.adoc[]
+include::build/generated-snippets/activation-coupon-topic/response-fields.adoc[]

@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -34,28 +36,29 @@ public class CouponController {
     }
 
     @PostMapping("/coupons")
-    public CustomApiResponse<?> createCoupons(@Valid @RequestBody CouponRequestDto.Create couponRequestDto) {
+    public CustomApiResponse<CustomResponseMessage> createCoupons(@Valid @RequestBody CouponRequestDto.Create couponRequestDto) {
         couponService.generateCoupon(couponRequestDto);
         return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.CREATE));
     }
 
     @PutMapping("/coupons/{couponId}")
-    public CustomApiResponse<?> updateCoupons(@Valid @RequestBody CouponRequestDto.Update couponRequestDto,
+    public CustomApiResponse<CustomResponseMessage> updateCoupons(@Valid @RequestBody CouponRequestDto.Update couponRequestDto,
                                               @PathVariable UUID couponId) {
         couponService.updateCoupon(couponRequestDto,couponId);
         return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE));
     }
 
     @PatchMapping("/coupontopics/{couponTopicId}/coupons")
-    public CustomApiResponse<?> updateCouponTopicActivation(@PathVariable UUID couponTopicId,
+    public CustomApiResponse<CustomResponseMessage> updateCouponTopicActivation(@PathVariable UUID couponTopicId,
                                                  @RequestParam boolean activation) {
         couponService.determineActiveness(couponTopicId, activation);
         return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE));
     }
 
-    @PatchMapping("coupons/{couponId}")
-    public CustomApiResponse<?> useCoupon(@PathVariable UUID couponId) {
-        couponService.processCoupon(couponId);
+    @PatchMapping("coupons/{couponCode}")
+    public CustomApiResponse<CustomResponseMessage> useCoupon(@PathVariable String couponCode,
+                                          @AuthenticationPrincipal UserDetails userDetails) {
+        couponService.processCoupon(couponCode,userDetails);
         return CustomApiResponse.ok(new CustomResponseMessage("Coupon " + SuccessMessage.UPDATE));
     }
 

@@ -1,16 +1,16 @@
 package com.we_assignment.common;
 
-import com.we_assignment.entity.CouponTopic;
+import com.we_assignment.exception.coupon.CouponInvalidException;
 import com.we_assignment.exception.coupon.CouponLockException;
 import com.we_assignment.exception.coupon.CouponNullPointerException;
 import com.we_assignment.exception.coupon.CouponUnavailableException;
 import com.we_assignment.exception.coupontopic.CouponTopicNullPointerException;
 import com.we_assignment.exception.member.MemberNullPointerException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MemberNullPointerException.class)
@@ -53,4 +53,11 @@ public class GlobalExceptionHandler {
                         "null");
     }
 
+    @ExceptionHandler(CouponInvalidException.class)
+    public CustomApiResponse<String> handleCouponInvalidException(CouponInvalidException ex) {
+        return CustomApiResponse
+                .of(HttpStatus.SERVICE_UNAVAILABLE,
+                        ex.getMessage(),
+                        "null");
+    }
 }

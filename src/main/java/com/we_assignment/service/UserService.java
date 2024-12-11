@@ -8,6 +8,7 @@ import com.we_assignment.exception.member.MemberNullPointerException;
 import com.we_assignment.repository.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponseDto getUserResponseDtoById(UUID id) {
         return userToUserResponseDto(getUserById(id));
@@ -41,7 +43,7 @@ public class UserService {
         return User.builder()
                 .id(UUID.randomUUID())
                 .username(userRequestDto.getUsername())
-                .password(userRequestDto.getPassword())
+                .password(passwordEncoder.encode(userRequestDto.getPassword()))
                 .email(userRequestDto.getEmail())
                 .role(UserRole.USER)
                 .build();

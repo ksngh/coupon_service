@@ -1,6 +1,8 @@
 package com.we_assignment.repository.querydsl;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.we_assignment.dto.response.CouponResponseDto;
 import com.we_assignment.entity.Coupon;
@@ -27,24 +29,20 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
         QCoupon qCoupon = QCoupon.coupon;
         QCouponTopic qCouponTopic = QCouponTopic.couponTopic;
 
-        List<Coupon> coupons = queryFactory
-                .selectFrom(qCoupon)
-                .join(qCoupon.couponTopic, qCouponTopic).fetchJoin()
+        List<CouponResponseDto> results = queryFactory
+                .select(Projections.constructor(CouponResponseDto.class,
+                        qCoupon.code,
+                        qCoupon.expiredAt,
+                        qCoupon.isRedeemed,
+                        qCoupon.couponTopic.name,
+                        qCoupon.couponTopic.description
+                ))
+                .from(qCoupon)
+                .join(qCoupon.couponTopic, qCouponTopic)
                 .where(predicate)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
-        List<CouponResponseDto> results = coupons.stream()
-                .map(coupon -> new CouponResponseDto(
-                        coupon.getCode(),
-                        coupon.getExpiredAt(),
-                        Boolean.TRUE.equals(coupon.isRedeemed()),
-                        coupon.getCouponTopic().getName(),
-                        coupon.getCouponTopic().getDescription()
-                ))
-                .toList();
-
 
         long totalCount = queryFactory
                 .select(qCoupon.count())
@@ -52,7 +50,6 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
                 .where(predicate)
                 .fetchOne();
 
-        // 4. Page 객체 반환
         return new PageImpl<>(results, pageable, totalCount);
     }
 
@@ -69,4 +66,22 @@ public class CustomCouponRepositoryImpl implements CustomCouponRepository {
                 .fetch();
     }
 
+    public BooleanExpression createCouponPredicate(String couponCode, Boolean isRedeemed, String couponTopicName) {
+        QCoupon c = QCoupon.coupon;
+        QCouponTopic ct = QCouponTopic.couponTopic;
+
+        BooleanExpression predicate = Expressions.asBoolean(true).isTrue();
+
+        if (couponTopicName != null) {
+            predicate = predicate.and(ct.name.eq(couponTopicName));
+        }
+        if (couponCode != null) {
+            predicate = predicate.and(c.code.eq(couponCode));
+        }
+        if (isRedeemed != null) {
+            predicate = predicate.and(c.isRedeemed.eq(isRedeemed));
+        }
+
+        return predicate;
+    }
 }
