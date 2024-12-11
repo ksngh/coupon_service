@@ -33,13 +33,13 @@ public class BatchConfig {
     }
 
     @Bean
-    public Step archiveCouponsStep(JpaPagingItemReader<Coupon> couponItemReader,
+    public Step archiveCouponsStep(JpaPagingItemReader<Coupon> couponSixMonthsReader,
                                    ItemProcessor<Coupon, ArchivedCoupon> couponItemProcessor,
                                    ItemWriter<ArchivedCoupon> compositeItemWriter
                                    ) {
         return new StepBuilder("archiveCouponsStep", jobRepository)
                 .<Coupon, ArchivedCoupon>chunk(100, transactionManager)
-                .reader(couponItemReader)
+                .reader(couponSixMonthsReader)
                 .processor(couponItemProcessor)
                 .writer(compositeItemWriter)
                 .build();
