@@ -275,7 +275,7 @@ https://github.com/user-attachments/assets/757a08ce-08f6-4443-879e-cd3954c34aeb
 - Exception 처리 로직이 중복되는 부분은 상속 구조를 도입하여 재사용성을 높일 수 있습니다.</br>
 - QueryDSL의 Q엔티티를 static으로 관리하면 객체를 반복적으로 생성하는 비용을 줄일 수 있습니다.</br>
 - BooleanExpression의 구성 요소를 미리 정의해 두면 재사용성을 높이는 데 도움이 될 것입니다.</br>
-- 디렉토리 구조를 수정해도 좋을 거 같습니다. 가령, core / base 으로 나누어 controller, service, repository 등의 로직과 직결된 파일은 core, 나머지 엔티티나 dto, config는 base에 두어도 괜찮을 거 같습니다.
+- 디렉토리 구조를 수정해도 좋을 거 같습니다. 가령, core / base 으로 나누어 controller, service, repository 등의 로직과 직결된 파일은 core, 나머지 엔티티나 dto, config는 base에 두어도 괜찮을 거 같습니다.</br>
 예시 )</br>
 src/main/java/com/we_assignment</br>
 ├── core</br>
@@ -305,16 +305,16 @@ src/main/java/com/we_assignment</br>
 
 git clone https://github.com/ksngh/we_assignment.git
 
-cd we-assignment
+cd we_assignment
 
 ### 2. pull docker image & container 띄우기
 
 - mongoDB </br>
 docker run -d --name mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=we_assignment -e MONGO_INITDB_ROOT_PASSWORD=we_password mongo:6.0</br>
-- prometheus </br>
-docker run -d --name prometheus -p 9090:9090 -v "./prometheus.yml:./etc/prometheus/prometheus.yml" prom/prometheus
+- prometheus {/path/to/your/prometheus.yml}은 해당 파일이 있는 절대 경로입니다.</br>
+docker run -d --name prometheus -p 9090:9090 -v "{/path/to/your/prometheus.yml}:etc/prometheus/" prom/prometheus</br>
 - mariaDB </br>
-docker run -d --name mariadb-container -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_DATABASE=we_database -e MYSQL_USER=we_user -e MYSQL_PASSWORD=my_password -p 3306:3306 mariadb:latest
+docker run -d --name mariadb-container -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_DATABASE=we_database -e MYSQL_USER=we_user -e MYSQL_PASSWORD=my_password -p 3306:3306 mariadb:latest</br>
 - redis</br>
 docker run -d --name redis-container -p 6379:6379 redis:latest
 
@@ -322,8 +322,12 @@ docker run -d --name redis-container -p 6379:6379 redis:latest
 
 ./gradlew build
 
+cd build/libs
+
+java -jar we_assignment-0.0.1-SNAPSHOT.jar
+
 * resources/static/sqls 디렉토리 내 batch의 스키마와 index의 sql문이 자동화가 되어있지 않습니다.</br>
-따로 DB에서 설정을 하여야 합니다.
+따로 DB에서 실행 하여야 합니다.
 
 ### 4. API 문서 확인
 
