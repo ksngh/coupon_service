@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +31,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,6 +46,7 @@ class CouponTopicControllerTest {
     private CouponTopicService couponTopicService;
 
     @Test
+    @WithMockUser
     @DisplayName("쿠폰 토픽 생성 테스트")
     void createCouponTopic() throws Exception {
         // Mock 데이터 생성
@@ -63,6 +66,7 @@ class CouponTopicControllerTest {
 
         // API 호출 및 문서화
         mockMvc.perform(post("/api/coupontopics")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
@@ -82,6 +86,7 @@ class CouponTopicControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("쿠폰 토픽 조회 테스트")
     void getCouponTopic() throws Exception {
         // Mock 데이터 생성
@@ -96,6 +101,7 @@ class CouponTopicControllerTest {
 
         // API 호출 및 문서화
         mockMvc.perform(get("/api/coupontopics/{coupontopicsId}", topicId)
+                        .with(csrf())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", is(200)))

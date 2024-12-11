@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public CustomApiResponse<?> signup(@RequestBody UserRequestDto.SignUp signupRequestDto) {
+    public CustomApiResponse<CustomResponseMessage> signup(@RequestBody UserRequestDto.SignUp signupRequestDto) {
         userService.signUp(signupRequestDto);
         return CustomApiResponse.ok(new CustomResponseMessage("User " + SuccessMessage.CREATE));
     }

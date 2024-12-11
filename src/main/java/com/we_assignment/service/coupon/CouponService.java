@@ -109,7 +109,6 @@ public class CouponService {
         }
     }
 
-    // 한 사용자가 동일 토픽에 대한 예외처리 필요
     public boolean validateCouponRedemption(String code) {
         if (couponRedemptionService.getCouponRedemptionByCouponCode(code).isEmpty()) {
             return true;
@@ -166,5 +165,6 @@ public class CouponService {
         }
 
     }
+
 
 }
