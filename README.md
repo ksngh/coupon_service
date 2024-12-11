@@ -53,8 +53,11 @@
 
 ## 인프라 설계
 
-서비스의 인프라는 다음과 같이 구성되어 있습니다:
-![coupon drawio](https://github.com/user-attachments/assets/ef26f6cc-4598-4868-a4b9-31a53e63f4f4)
+서비스의 인프라는 다음과 같이 구성되어 있습니다:</br>
+
+<img src="https://github.com/user-attachments/assets/0d151989-e0cd-4f82-9318-28e9791e1043" alt="codegenerator" style="border: 1px solid #ddd; border-radius: 5px; width: 500px;">
+
+
 
 
 
@@ -69,23 +72,28 @@
 
 ## 시연 영상
 
-시연은 POST MAN과 intelliJ IDE로 진행하였으며, 순서는 다음과 같습니다.
-
-1. 회원 가입 - 로그인 (jwt 토큰 발급)
-2. 쿠폰 토픽 생성 - 쿠폰 생성 - 쿠폰 토픽으로 일괄 비활성화 처리
-3. 쿠폰 일괄 조회 및 검색 기능 확인
-4. 쿠폰 코드로 쿠폰 사용 처리 하기
-    1. 쿠폰 사용 오류 내서 fallback 함수 발동하는지 확인
-    2. prometheus로 fallback 확인
-5. 배치를 통해 쿠폰 데이터 mongoDB로 마이그레이션 후 일괄 삭제
-6. build 후 rest docs (api 명세서) 확인하기
-
 <details>
 <summary> <strong> 영상 내용 (클릭) </strong> </summary>
 </br>
 1. 회원 가입 - 로그인 (jwt 토큰 발급)</br>
+    
+
+https://github.com/user-attachments/assets/8dc56337-1292-436f-8982-95ceeadb9860
+
+
 2. 쿠폰 토픽 생성 - 쿠폰 생성 - 쿠폰 토픽으로 일괄 비활성화 처리</br>
+
+
+https://github.com/user-attachments/assets/f6968ad3-ab64-4f48-9603-050dfcaf9049
+
+
+
 3. 쿠폰 일괄 조회 및 검색 기능 확인</br>
+
+
+https://github.com/user-attachments/assets/bec806ad-7770-4bfa-8423-75cb00391e4d
+
+
 4. 쿠폰 코드로 쿠폰 사용 처리하기</br>
 
 - 쿠폰 사용 오류 내고 prometheus로 fallback 확인하기</br>
@@ -100,7 +108,24 @@ https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
 
 6. build 후 rest docs (api 명세서) 확인하기
 
+</br>
+
+
+https://github.com/user-attachments/assets/757a08ce-08f6-4443-879e-cd3954c34aeb
+
+
 </details>
+
+시연은 POST MAN과 intelliJ IDE로 진행하였으며, 순서는 다음과 같습니다.
+
+1. 회원 가입 - 로그인 (jwt 토큰 발급)
+2. 쿠폰 토픽 생성 - 쿠폰 생성 - 쿠폰 토픽으로 일괄 비활성화 처리
+3. 쿠폰 일괄 조회 및 검색 기능 확인
+4. 쿠폰 코드로 쿠폰 사용 처리 하기
+    1. 쿠폰 사용 오류 내서 fallback 함수 발동하는지 확인
+    2. prometheus로 fallback 확인
+5. 배치를 통해 쿠폰 데이터 mongoDB로 마이그레이션 후 일괄 삭제
+6. build 후 rest docs (api 명세서) 확인하기
 
 ---
 
@@ -167,10 +192,10 @@ https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
 - 스프링 배치를 활용하여 지워진 지 6개월 이상 된 쿠폰 데이터를 mongoDB에 마이그래이션 하였습니다.<br/>
 - 배치에서는 job과 step으로 나뉘며, step에서는 reader,writer,proccesor 을 파라미터로 주입받아 100개의 데이터씩 처리합니다.</br>
 - 스케줄링 기능으로 3개월에 한 번씩 동작합니다.</br>
-- 추가로 자주 검색하는 Coupon 테이블의 code 컬럼은 DB에 인덱스를 추가하여 쿼리 성능을 높였습니다.</br>
+- 추가로 자주 검색하는 Coupon 테이블의 code 컬럼과 CouponRedemption의 coupon_fk는 DB에 인덱스를 추가하여 쿼리 성능을 높였습니다.</br>
 </br>
 - index (sql) </br>
-    <img src="https://github.com/user-attachments/assets/aa0b2600-76c4-40f8-a142-c9160e00b33c" alt="index" style="border: 1px solid #ddd; border-radius: 5px;"></br>
+    <img src="https://github.com/user-attachments/assets/281e2395-7a76-4344-894a-b571868d0183" alt="index" style="border: 1px solid #ddd; border-radius: 5px;"></br>
     </br>
 - ItemReader </br>
     <img src = "https://github.com/user-attachments/assets/590cb489-16a5-4f5b-8951-9cbcb224b4cf" alt="ItemReader" style="border: 1px solid #ddd; border-radius: 5px;"></br>
@@ -196,47 +221,114 @@ https://github.com/user-attachments/assets/6968287d-88b7-4cce-bf2a-1a02501720b2
 - 사용자 회원가입
 - jwt를 이용하여 인증 및 인가 관리
 
+### 4. 테스트 코드
+
+<details>
+<summary>쿠폰 사용 처리 테스트 코드</summary>
+</br>
+- controller 테스트에서는 @WebMvcTest 어노테이션을 사용하여 컨트롤러 계층만 빈에 로드하였습니다.</br>
+- controller 공용 response를 분리하여 static으로 생성하였습니다.</br>
+- service 테스트에서는 레포지토리를 모킹하여 단위 테스트를 작성하였습니다.</br>
+- 컨트롤러 테스트가 통과하면 rest docs에 반영이 됩니다.</br>
+</br>
+- controller test
+<img src="https://github.com/user-attachments/assets/e639e849-89ac-491d-9cdc-53b2e6b94130" alt="controllertest" style="border: 1px solid #ddd; border-radius: 5px; width="400"></br>
+
+- service test (에러 검증 및 정상 사용 테스트)
+<img src="https://github.com/user-attachments/assets/80e4aa7b-9163-4e23-918e-9eb7ca7eeb82" alt="servicevalid1" style="border: 1px solid #ddd; border-radius: 5px;">
+
+
+</br>
+<img src="https://github.com/user-attachments/assets/eeb3b54a-496b-4772-93aa-8bf03e935d42" alt="servicevalid2" style="border: 1px solid #ddd; border-radius: 5px; width="400">
+
+</br>
+<img src="https://github.com/user-attachments/assets/0022f04f-0ee2-40de-8968-ebbc61777d9e" alt="servicevalid3" style="border: 1px solid #ddd; border-radius: 5px; width="400">
+
+</br>
+<img src="https://github.com/user-attachments/assets/738055ee-fc6f-40e5-b680-4381ac42e51d" alt="servicecouponuse" style="border: 1px solid #ddd; border-radius: 5px; width="400">
+
+</details>
+
+
 ---
 
 ## 트러블 슈팅
 
 ### 1. 쿠폰 사용시 발생하는 동시성 문제
 
-- **문제**: 쿠폰 사용 시 여러 사용자가 동시에 요청을 보내면 중복 사용 발생.
-- **해결**: Redis를 활용하여 동시 요청 처리, Redis에 문제 발생 시 resilience4j를 통해 fallback 메소드 실행
+- **문제**: 쿠폰 사용 시 여러 사용자가 동시에 요청을 보내면 중복 사용 발생.</br>
+- **해결**: Redis를 활용하여 동시 요청 처리, Redis에 문제 발생 시 resilience4j를 통해 fallback 메소드 실행, fallback 메소드는 ConcurrentHashMap으로 구현</br>
+메서드에 직접 syncronized 키워드를 붙이거나 DB에 락을 거는 방법도 있었으나, 전체적으로 락을 걸기 때문에 성능 저하가 우려되어 bucket에만 락을거는 ConcurrentHashmap을 선택했습니다.
+또한, 다중 클러스터 환경을 고려하여 Redis를 사용하였습니다.
 
 ### 2. 오래된 데이터 누적 시 발생하는 쿼리 성능 감소 문제
 
 - **문제**: 쿠폰 데이터 누적시 쿼리 성능이 감소
-- **해결**: DB index 설정, mongoDB에 주기적으로 파티셔닝 하여 쿼리 성능 문제 해결
+- **해결**: DB index 설정, mongoDB에 주기적으로 파티셔닝 하여 쿼리 성능 문제 해결</br>
+자주 입력하는 code에 인덱스를 걸었으며, coupon_fk에 인덱스 처리를 하여 couponRedemption 테이블 조회를 신속하게 할 수 있습니다.
 
 ---
 
 ## 개선점
-- 요구 사항에 따라, reentrantklock이나 메시지 큐로 동시성을 해결할 수 있을 거 같습니다.
-- jpa repository를 직접 상속받지 않고, 따로 repository 인터페이스를 만들고 상속받는 구조가 더 명시적일 것 같습니다.
-- exception의 처리 또한 내용이 중복되기 때문에, 상속 구조로 만들면 재사용성이 더 높아질 거 같습니다.
-- querydsl의 Q엔티티 또한 static으로 빼두면 계속해서 객체를 생성하지 않을 수 있습니다.
-- 현재는 괜찮지만, booleanExpression도 그 요소 하나하나 생성해 두는게 재사용성을 높일 수 있을 것 같습니다.
-
+- 요구 사항에 따라 ReentrantLock이나 메시지 큐를 활용하면 동시성 문제를 효과적으로 해결할 수 있을 거라 생각합니다.</br>
+- JPA Repository를 직접 상속받는 대신, 별도의 Repository 인터페이스를 정의하고 이를 구현하는 구조로 변경하면 더 명확하고 유연한 설계가 가능합니다.</br>
+- Exception 처리 로직이 중복되는 부분은 상속 구조를 도입하여 재사용성을 높일 수 있습니다.</br>
+- QueryDSL의 Q엔티티를 static으로 관리하면 객체를 반복적으로 생성하는 비용을 줄일 수 있습니다.</br>
+- BooleanExpression의 구성 요소를 미리 정의해 두면 재사용성을 높이는 데 도움이 될 것입니다.</br>
+- 디렉토리 구조를 수정해도 좋을 거 같습니다. 가령, core / base 으로 나누어 controller, service, repository 등의 로직과 직결된 파일은 core, 나머지 엔티티나 dto, config는 base에 두어도 괜찮을 거 같습니다.
+예시 )</br>
+src/main/java/com/we_assignment</br>
+├── core</br>
+│   ├── config                      # 공통 설정 클래스</br>
+│   ├── domain                      # 핵심 도메인 엔티티</br>
+│   │   ├── Coupon.java</br>
+│   │   ├── CouponRedemption.java</br>
+│   │   └── User.java</br>
+│   ├── exception                   # 공통 예외 처리</br>
+│   ├── repository                  # 핵심 레포지토리 인터페이스</br>
+│   └── service                     # 핵심 비즈니스 로직</br>
+│</br>
+├── base</br>
+│   ├── entity                      # 공통 엔티티 클래스</br>
+│   │   └── BaseTimeEntity.java</br>
+│   ├── exception                   # 공통 예외 정의</br>
+│   │   └── CustomException.java</br>
+│   ├── util                        # 공통 유틸리티 클래스</br>
+│   └── constants                   # 상수 관리</br>
+│   └── ErrorCode.java</br>
+└── ...</br>
 ---
 
 ## 프로젝트 실행 방법
 
 ### 1. Clone Repository
 
-git clone 
+git clone https://github.com/ksngh/we_assignment.git
 
 cd we-assignment
 
-### 2. pull docker image
+### 2. pull docker image & container 띄우기
+
+- mongoDB </br>
+docker run -d --name mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=we_assignment -e MONGO_INITDB_ROOT_PASSWORD=we_password mongo:6.0</br>
+- prometheus </br>
+docker run -d --name prometheus -p 9090:9090 -v "./prometheus.yml:./etc/prometheus/prometheus.yml" prom/prometheus
+- mariaDB </br>
+docker run -d --name mariadb-container -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_DATABASE=we_database -e MYSQL_USER=we_user -e MYSQL_PASSWORD=my_password -p 3306:3306 mariadb:latest
+- redis</br>
+docker run -d --name redis-container -p 6379:6379 redis:latest
 
 ### 3. Build and Run
 
+./gradlew build
+
+* resources/static/sqls 디렉토리 내 batch의 스키마와 index의 sql문이 자동화가 되어있지 않습니다.</br>
+따로 DB에서 설정을 하여야 합니다.
+
 ### 4. API 문서 확인
 
-빌드 후
-rest Docs를 통해 API 명세를 확인할 수 있습니다:
+빌드 후 rest Docs를 통해 API 명세를 확인할 수 있습니다</br>
+디렉토리는 /build/docs/asciidoc/index.html 입니다.
 
 ---
 
