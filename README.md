@@ -26,7 +26,7 @@
 - 단일 쿠폰 코드에 대해서는 동시 요청시에도 중복 사용이 되지 않도록 처리합니다.
 - 필수 구현 사항
     1. 쿠폰 발행
-    2. 쿠폰 사용(redeem)
+    2. 쿠폰 사용
     3. 일괄 쿠폰 정지 (주제별)
 - 선택 구현 사항
     1. Unit Test 작성
@@ -303,9 +303,9 @@ src/main/java/com/we_assignment</br>
 
 ### 1. Clone Repository
 
-git clone https://github.com/ksngh/we_assignment.git
+git clone https://github.com/ksngh/coupon_service.git
 
-cd we_assignment
+cd coupon_service
 
 ### 2. pull docker image & container 띄우기
 
@@ -324,7 +324,7 @@ docker run -d --name redis-container -p 6379:6379 redis:latest
 
 cd build/libs
 
-java -jar we_assignment-0.0.1-SNAPSHOT.jar
+java -jar coupon_service-0.0.1-SNAPSHOT.jar
 
 * resources/static/sqls 디렉토리 내 batch의 스키마와 index의 sql문이 자동화가 되어있지 않습니다.</br>
 따로 DB에서 실행 하여야 합니다.
